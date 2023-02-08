@@ -1,0 +1,232 @@
+#!/usr/bin/env python
+#
+#This file is part of "jiffy".
+#
+#Project: jiffy: A product for building and managing infrastructure: 
+#cloud provider services, and servers and their configurations.
+#
+#Description: A product for building and managing infrastructure. 
+#This includes third party API calls for services such as virtual
+#cloud servers, load balancers, databases, and other. The product 
+#manages connectivity and appropriate communication among these 
+#aws.
+#
+#Copyright (C) Gary Leong - All Rights Reserved
+#Unauthorized copying of this file, via any medium is strictly prohibited
+#Proprietary and confidential
+#Written by Gary Leong  <gwleong@gmail.com, September 17,2015
+
+import json
+import sys
+from time import sleep
+
+from ed_helper_publisher.loggerly import ElasticDevLogger
+from ed_helper_publisher.cloud.awscli import AwsCli
+
+class Main(AwsCli):
+
+    def __init__(self,**kwargs):
+
+        AwsCli.__init__(self)
+        self.classname = 'EcrRepository'
+        self.logger = ElasticDevLogger(self.classname,logcategory="cloudprovider")
+        self.logger.debug("Instantiating %s" % self.classname)
+        self.base_cmd = "aws ecr"
+        self.product = "ecr"
+        self.provider = "aws"
+        self.resource_type = "ecr_repo"
+        self.shelloutconfig = "elasticdev:::aws_storage::ecr_repo"
+
+    def exists(self,**kwargs):
+
+        add_cmd = "describe-repositories"
+
+        name = kwargs.get("name")
+        output_to_json = kwargs.get("output_to_json",True)
+
+        results = {"status":True}
+
+        _cmd = "{} {} --repository-names {}".format(self.base_cmd,add_cmd,name)
+        cmd = self.get_cmd_region(_cmd)
+        results = self.execute(cmd,output_to_json=output_to_json,exit_error=False)
+
+        return results
+
+    def get(self):
+
+        results = self.exists(**self.inputargs)
+        if results.get("status") is None: exit(0)
+        if results.get("status") is False: self.cmd_failed(**self.inputargs)
+
+        self.successful_output(output=results["output"])
+
+    def create(self):
+
+        name = self.inputargs["name"]
+        insert_if_exists = self.inputargs.get("insert_if_exists")
+
+        # Needs False if it finds the resource item
+        exists = self.exists(output_to_json=True,**self.inputargs)
+
+        if exists.get("status") is not False:
+            failed_message = "{} name = {} already exists".format(self.product,name)
+            if not insert_if_exists: self.cmd_failed(failed_message=failed_message)
+            output = exists["output"]
+
+            if output.get("repositories") and not output.get("repository"): 
+                output["repository"] = output["repositories"][0]
+
+        else:
+            output = None
+
+        if not output:
+            add_cmd = "create-repository"
+            _cmd = "{} {} --repository-name {}".format(self.base_cmd,add_cmd,name)
+            #_cmd = "{} {} --repository-name {} --tags Key=name,Value={}".format(self.base_cmd,
+            #                                                                    add_cmd,
+            #                                                                    name,
+            #                                                                    name)
+            cmd = self.get_cmd_region(_cmd)
+
+            output = self.execute(cmd,output_to_json=True,exit_error=True)["output"]
+
+        # With AWS, repository are in regions, which is a bit odd, but we 
+        # we preserve this distinction by including region in the _id
+        tags = [ self.product, self.provider, name, self.aws_default_region ]
+        _id = self.get_hash(tags)
+
+        resource = {"raw":{}}
+        resource["raw"][self.product] = output["repository"]
+        resource["registry_id"] = output["repository"]["registryId"]
+        resource["_id"] = _id
+        resource["id"] = _id
+        resource["arn"] = output["repository"]["repositoryArn"] 
+        resource["repository_name"] = name
+        resource["repository_uri"] = output["repository"]["repositoryUri"]
+        resource["name"] = name
+        resource["resource_type"] = self.resource_type
+        resource["provider"] = self.provider
+        resource["region"] = self.aws_default_region
+        resource["aws_default_region"] = self.aws_default_region
+        resource["tags"] = tags
+
+        resource["destroy"] = {"shelloutconfig":self.shelloutconfig}
+        resource["destroy"]["env_vars"] = json.dumps({"NAME":name,"METHOD":"destroy","AWS_DEFAULT_REGION":self.aws_default_region})
+
+        self.successful_output(output=resource)
+
+    def destroy(self):
+
+        name = self.inputargs["name"]
+        force = self.inputargs.get("force")
+
+        self.logger.debug('Looking to destroy {} name = "{}" in "{}"'.format(self.product,
+                                                                             name,
+                                                                             self.aws_default_region))
+
+        _results = self.exists(output_to_json=False,**self.inputargs)
+
+        if not _results.get("status"):
+            output = '{} name = "{}" in "{}" does not exists'.format(self.product,
+                                                                     self.inputargs.get("name"),
+                                                                     self.aws_default_region)
+            self.successful_output(output=output)
+
+        #aws ecr delete-repository --force --repository-name ubuntu
+
+        add_cmd = "delete-repository"
+        _cmd = "{} {}".format(self.base_cmd,add_cmd)
+        if force: _cmd = "{} --force".format(_cmd)
+        _cmd = "{} --repository-name {}".format(_cmd,name)
+        cmd = self.get_cmd_region(_cmd)
+
+        results = self.execute(cmd,output_to_json=None)
+
+        if results.get("status") is True: 
+            self.logger.debug('{} name "{}" destroyed in {}'.format(self.product,name,self.aws_default_region))
+            self.successful_output(output=results["output"])
+        sleep(1)
+
+        failed_message = "could not destroy {} name {} in {}".format(self.product,name,self.aws_default_region)
+        self.cmd_failed(failed_message=failed_message)
+
+def usage():
+
+    print """
+script + environmental variables
+
+or
+
+script + json_input (as argument)
+
+environmental variables:
+    basic:
+        AWS_ACCESS_KEY_ID  
+        AWS_SECRET_ACCESS_KEY
+        METHOD
+        AWS_DEFAULT_REGION (optional)
+
+    create:
+        NAME
+
+    destroy:
+        NAME
+        FORCE
+
+    get:
+        NAME
+
+       """
+    exit(4)
+
+if __name__ == '__main__':
+
+    try:
+        json_input = sys.argv[1]
+    except:
+        json_input = None
+
+    main = Main()
+
+    if json_input:
+        main.set_inputargs(json_input=json_input)
+    else:
+        set_env_vars = [ "method",
+                         "name",
+                         "force",
+                         "insert_if_exists",
+                         "aws_default_region" ]
+
+        main.set_inputargs(set_env_vars=set_env_vars)
+   
+    method = main.inputargs.get("method")
+
+    if not method:
+        print "method/ENV VARIABLE METHOD is needed"
+        exit(4)
+
+    # Set class and region
+    main.get_region()
+
+    if method == "create":
+
+        main.check_required_inputargs(keys=["name"])
+        main.create()
+
+    elif method == "destroy":
+    
+        main.check_required_inputargs(keys=["name"])
+        main.destroy()
+
+    elif method == "get":
+
+        main.check_required_inputargs(keys=["name"])
+        main.get()
+
+    else:
+        usage()
+        print 'method "{}" not supported!'.format(method)
+        exit(4)
+
+
+

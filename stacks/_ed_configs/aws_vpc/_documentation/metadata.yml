@@ -1,0 +1,17 @@
+desc: Creates a simple VPC on aws
+release: 0.0.1
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - vpc
+   - private_networking
+   - networking
+   - database
+   - ed_core
+   - ed_saas
+   - web
+   - ed
+   - aws
+   - infrastructure

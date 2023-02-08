@@ -1,0 +1,18 @@
+desc: The stack attempts to create security group on an existing VPC
+release: 0.0.1
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - vpc
+   - security_group
+   - private_networking
+   - networking
+   - database
+   - ed_core
+   - ed_saas
+   - web
+   - ed
+   - aws
+   - infrastructure

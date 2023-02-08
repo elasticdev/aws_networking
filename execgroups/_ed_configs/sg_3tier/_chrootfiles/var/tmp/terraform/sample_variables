@@ -1,0 +1,5 @@
+variable "vpc_id" {
+  type        = string
+  description = "vpc id"
+  default     = "vpc-00098423728c15b67"
+}

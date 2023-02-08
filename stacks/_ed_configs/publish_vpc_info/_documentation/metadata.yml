@@ -1,0 +1,13 @@
+desc:  Publishes the vpc info on the dashboard
+release: 0.0.1
+categories: 
+   - aws
+   - vpc
+   - cloud
+   - public_cloud
+tags:
+   - vpc
+   - aws
+   - infrastructure
+   - cloud
+   - public_cloud

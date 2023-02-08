@@ -1,0 +1,21 @@
+desc: Creates VPC on AWS with 3tier security groups
+release: 0.0.1
+categories: 
+   - aws
+   - cloud
+   - public_cloud
+tags:
+   - vpc
+   - private_networking
+   - networking
+   - database
+   - ed_core
+   - ed_saas
+   - web
+   - ed
+   - aws
+   - infrastructure
+   - featured
+   - feature
+   - featured_infrastructure
+   - feature_infrastructure
