@@ -29,7 +29,7 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_internet_gateway" "this" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id = aws_vpc.main.id
 
   tags = merge(
     var.cloud_tags,
@@ -44,7 +44,7 @@ resource "aws_internet_gateway" "this" {
 resource "aws_subnet" "public" {
   count      = "${length(local.public_subnets)}"
   cidr_block = "${element(values(local.public_subnets), count.index)}"
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = aws_vpc.main.id
 
   map_public_ip_on_launch = true
   availability_zone       = "${element(keys(local.public_subnets), count.index)}"
@@ -62,7 +62,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count      = "${length(local.private_subnets)}"
   cidr_block = "${element(values(local.private_subnets), count.index)}"
-  vpc_id     = "${aws_vpc.main.id}"
+  vpc_id     = aws_vpc.main.id
 
   map_public_ip_on_launch = true
   availability_zone       = "${element(keys(local.private_subnets), count.index)}"
@@ -112,7 +112,7 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_route_table" "private" {
-  vpc_id = "${aws_vpc.main.id}"
+  vpc_id     = aws_vpc.main.id
 
   tags = merge(
     var.cloud_tags,
@@ -135,9 +135,9 @@ resource "aws_route_table_association" "private" {
 ######################################################################
 
 output "vpc_id" {
-  value = "${aws_vpc.main.id}"
+  value     = aws_vpc.main.id
 }
 
 output "vpc_name" {
-  value = "${aws_vpc.main.tags.Name}"
+  value     = aws_vpc.main.tags.Name
 }
