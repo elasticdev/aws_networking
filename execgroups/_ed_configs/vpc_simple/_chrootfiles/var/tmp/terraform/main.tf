@@ -134,10 +134,8 @@ resource "aws_route_table_association" "private" {
 # outputs
 ######################################################################
 
-output "vpc_id" {
-  value     = aws_vpc.main.id
-}
-
-output "vpc_name" {
-  value     = aws_vpc.main.tags.Name
-}
+output "vpc_id" { value = aws_vpc.main.id }
+output "vpc_name" { value = aws_vpc.main.tags.Name }
+output "vpc" { value = aws_vpc.main.tags.Name }
+output "id" { value = aws_vpc.main.id }
+output "name" { value = aws_vpc.main.tags.Name }
