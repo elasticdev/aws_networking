@@ -5,17 +5,8 @@ provider "aws" {
     tags = merge(
       var.cloud_tags,
       {
-        Orchestrated_by = 'elasticdev'
+        Orchestrated_by = "elasticdev"
       },
     )
-  }
-}
-
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-      version = "~> 2.57.0"
-    }
   }
 }

@@ -13,7 +13,7 @@ def run(stackargs):
     stack.parse.add_optional(key="aws_default_region",default="us-east-1")
 
     # docker image to execute terraform with
-    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env")
+    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:14")
 
     # if eks_cluster is specified, then add the correct tags to the vpc 
     stack.parse.add_optional(key="eks_cluster",default="null")
