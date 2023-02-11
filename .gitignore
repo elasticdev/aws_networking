@@ -1,3 +1,4 @@
 *.swp
 *.sw0
+*.swo
 .terraform

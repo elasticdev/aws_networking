@@ -51,34 +51,55 @@ def run(stackargs):
         stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
 
-    # Execute execgroup
-    env_vars = {"TF_VAR_vpc_name":stack.vpc_name}
-    env_vars["TF_VAR_vpc_tags"] = json.dumps(stack.vpc_tags)
-    env_vars["TF_VAR_aws_default_region"] = stack.aws_default_region
+    # Set terraform environmental variables, TF_VAR*
+    tf_exec_env_vars = { "vpc_name": stack.vpc_name,
+                         "vpc_tags": json.dumps(stack.vpc_tags),
+                         "aws_default_region": stack.aws_default_region,
+                         }
 
+    ed_tf_settings = { "tf_exec_env_vars":tf_exec_env_vars,
+                       "terraform_type":"aws_vpc",
+                       "tf_exec_include_raw": "True",
+                       "tf_exec_resource_keys": "all",
+                       "tf_exec_postscript":"tfstate_to_output" }  # testtest777 - replace this with generic parser
+
+    ed_resource_settings = { "resource_type":"vpc",
+                             "provider":"aws" }
+
+    ed_resource_settings["resource_values_hash"] = stack.b64_encode({ "aws_default_region":stack.aws_default_region,
+                                                                      "region":stack.aws_default_region })
+
+    # testtest777 labels additions
+    ed_resource_settings["resource_labels_hash"] = stack.b64_encode({ "keyboard":"querty",
+                                                                      "vendor":"compaq" })
+    if stack.cloud_tags_hash: 
+        tf_exec_env_vars["cloud_tags"] = json.dumps(stack.b64_decode(stack.cloud_tags_hash))
+
+    env_vars = { "METHOD":"create" }
+    env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
+    env_vars["ed_tf_settings_hash".upper()] = stack.b64_encode(ed_tf_settings)
+
+    # not necessary to set since it's set above in tf_exec_env_vars
+    env_vars["TF_VAR_aws_default_region"] = stack.aws_default_region
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["stateful_id".upper()] = stack.stateful_id
     env_vars["resource_type".upper()] = stack.resource_type
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
-    env_vars["METHOD"] = "create"
-    env_vars["CLOBBER"] = True
     env_vars["name".upper()] = stack.vpc_name
+
     env_vars["use_docker".upper()] = True
+    env_vars["CLOBBER"] = True
 
-    # Set terraform environmental variables
-    env_vars["TF_VAR_vpc_name"] = stack.vpc_name
-    env_vars["TF_VAR_aws_default_region"] = stack.aws_default_region
+    env_vars["RESOURCE_TAGS"] = "{},{},{}".format(stack.resource_type, 
+                                                  stack.vpc_name, 
+                                                  stack.aws_default_region)
 
-    if stack.cloud_tags_hash: 
-        env_vars["TF_VAR_cloud_tags"] = json.dumps(stack.b64_decode(stack.cloud_tags_hash))
-
-    env_vars["RESOURCE_TAGS"] = "{},{},{}".format(stack.resource_type, stack.vpc_name, stack.aws_default_region)
-
+    # env_vars that will be passed to
+    # the docker run environment as .env
     docker_env_fields_keys = env_vars.keys()
     docker_env_fields_keys.append("AWS_ACCESS_KEY_ID")
     docker_env_fields_keys.append("AWS_SECRET_ACCESS_KEY")
     docker_env_fields_keys.remove("METHOD")
-
     env_vars["DOCKER_ENV_FIELDS"] = ",".join(docker_env_fields_keys)
 
     inputargs = {"display":True}
