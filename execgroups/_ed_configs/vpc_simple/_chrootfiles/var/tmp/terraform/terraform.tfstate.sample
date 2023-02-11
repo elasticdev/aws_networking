@@ -1,0 +1,557 @@
+{
+  "version": 4,
+  "terraform_version": "1.3.8",
+  "serial": 73,
+  "lineage": "c1dfba2a-07d7-aa9f-0b5d917b7b68",
+  "outputs": {
+    "id": {
+      "value": "vpc-07a6bdy43552a9f3",
+      "type": "string"
+    },
+    "name": {
+      "value": "yoyo",
+      "type": "string"
+    },
+    "vpc": {
+      "value": "yoyo",
+      "type": "string"
+    },
+    "vpc_id": {
+      "value": "vpc-07a6bdy43552a9f3",
+      "type": "string"
+    },
+    "vpc_name": {
+      "value": "yoyo",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "account_id": "5463465465",
+            "arn": "arn:aws:iam::5463465465:root",
+            "id": "5463465465",
+            "user_id": "5463465465"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_region",
+      "name": "current",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "US East (N. Virginia)",
+            "endpoint": "ec2.us-east-1.amazonaws.com",
+            "id": "us-east-1",
+            "name": "us-east-1"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_default_route_table",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:route-table/rtb-08cacf76ba7b11836",
+            "default_route_table_id": "rtb-08cacf76ba7b11836",
+            "id": "rtb-08cacf76ba7b11836",
+            "owner_id": "5463465465",
+            "propagating_vgws": null,
+            "route": [],
+            "tags": {
+              "Name": "yoyo-route-public",
+              "Product": "route-table"
+            },
+            "tags_all": {
+              "Name": "yoyo-route-public",
+              "Product": "route-table",
+              "orchestrated_by": "elasticdev"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_internet_gateway",
+      "name": "this",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:internet-gateway/igw-0eed8cce2ea289af6",
+            "id": "igw-0eed8cce2ea289af6",
+            "owner_id": "5463465465",
+            "tags": {
+              "Name": "yoyo-internet-gateway",
+              "Product": "internet-gateway"
+            },
+            "tags_all": {
+              "Name": "yoyo-internet-gateway",
+              "Product": "internet-gateway",
+              "orchestrated_by": "elasticdev"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route",
+      "name": "public_internet_gateway",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "carrier_gateway_id": "",
+            "core_network_arn": "",
+            "destination_cidr_block": "0.0.0.0/0",
+            "destination_ipv6_cidr_block": "",
+            "destination_prefix_list_id": "",
+            "egress_only_gateway_id": "",
+            "gateway_id": "igw-0eed8cce2ea289af6",
+            "id": "r-rtb-08cacf76ba7b118361080289494",
+            "instance_id": "",
+            "instance_owner_id": "",
+            "local_gateway_id": "",
+            "nat_gateway_id": "",
+            "network_interface_id": "",
+            "origin": "CreateRoute",
+            "route_table_id": "rtb-08cacf76ba7b11836",
+            "state": "active",
+            "timeouts": {
+              "create": "5m",
+              "delete": null,
+              "update": null
+            },
+            "transit_gateway_id": "",
+            "vpc_endpoint_id": "",
+            "vpc_peering_connection_id": ""
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_default_route_table.public",
+            "aws_internet_gateway.this",
+            "aws_vpc.main"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 0,
+          "attributes": {
+            "carrier_gateway_id": "",
+            "core_network_arn": "",
+            "destination_cidr_block": "0.0.0.0/0",
+            "destination_ipv6_cidr_block": "",
+            "destination_prefix_list_id": "",
+            "egress_only_gateway_id": "",
+            "gateway_id": "igw-0eed8cce2ea289af6",
+            "id": "r-rtb-08cacf76ba7b118361080289494",
+            "instance_id": "",
+            "instance_owner_id": "",
+            "local_gateway_id": "",
+            "nat_gateway_id": "",
+            "network_interface_id": "",
+            "origin": "CreateRoute",
+            "route_table_id": "rtb-08cacf76ba7b11836",
+            "state": "active",
+            "timeouts": {
+              "create": "5m",
+              "delete": null,
+              "update": null
+            },
+            "transit_gateway_id": "",
+            "vpc_endpoint_id": "",
+            "vpc_peering_connection_id": ""
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC10zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_default_route_table.public",
+            "aws_internet_gateway.this",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:route-table/rtb-097304d5407a54626",
+            "id": "rtb-097304d5407a54626",
+            "owner_id": "5463465465",
+            "propagating_vgws": [],
+            "route": [],
+            "tags": {
+              "Name": "yoyo-route-private",
+              "Product": "route-table"
+            },
+            "tags_all": {
+              "Name": "yoyo-route-private",
+              "Product": "route-table",
+              "orchestrated_by": "elasticdev"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lM2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjEyMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table_association",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-0c299e1ba64b865f3",
+            "route_table_id": "rtb-097304d5407a54626",
+            "subnet_id": "subnet-037cacba5bafed415"
+          },
+          "sensitive_attributes": [],
+          "private": "bnbA==",
+          "dependencies": [
+            "aws_route_table.private",
+            "aws_subnet.private",
+            "aws_vpc.main"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-0641c782041365d17",
+            "route_table_id": "rtb-097304d5407a54626",
+            "subnet_id": "subnet-0ebc3b0f889299e87"
+          },
+          "sensitive_attributes": [],
+          "private": "bnbA==",
+          "dependencies": [
+            "aws_route_table.private",
+            "aws_subnet.private",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_route_table_association",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-07c7ffcac67dbd4e6",
+            "route_table_id": "rtb-08cacf76ba7b11836",
+            "subnet_id": "subnet-0004f0d5f0f7e5c6e"
+          },
+          "sensitive_attributes": [],
+          "private": "trtet==",
+          "dependencies": [
+            "aws_default_route_table.public",
+            "aws_subnet.public",
+            "aws_vpc.main"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 0,
+          "attributes": {
+            "gateway_id": "",
+            "id": "rtbassoc-0ae892cc5ad4962d4",
+            "route_table_id": "rtb-08cacf76ba7b11836",
+            "subnet_id": "subnet-0d88cf3bfc48e397a"
+          },
+          "sensitive_attributes": [],
+          "private": "trtet==",
+          "dependencies": [
+            "aws_default_route_table.public",
+            "aws_subnet.public",
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "private",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:subnet/subnet-037cacba5bafed415",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1a",
+            "availability_zone_id": "use1-az1",
+            "cidr_block": "10.10.201.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-037cacba5bafed415",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "5463465465",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "yoyo-service-private",
+              "subnet_environment": "private"
+            },
+            "tags_all": {
+              "Name": "yoyo-service-private",
+              "orchestrated_by": "elasticdev",
+              "subnet_environment": "private"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMCtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:subnet/subnet-0ebc3b0f889299e87",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1b",
+            "availability_zone_id": "use1-az2",
+            "cidr_block": "10.10.202.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-0ebc3b0f889299e87",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "5463465465",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "yoyo-service-private",
+              "subnet_environment": "private"
+            },
+            "tags_all": {
+              "Name": "yoyo-service-private",
+              "orchestrated_by": "elasticdev",
+              "subnet_environment": "private"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "index_key": 0,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:subnet/subnet-0004f0d5f0f7e5c6e",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1a",
+            "availability_zone_id": "use1-az1",
+            "cidr_block": "10.10.101.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-0004f0d5f0f7e5c6e",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "5463465465",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "yoyo-service-public",
+              "subnet_environment": "public"
+            },
+            "tags_all": {
+              "Name": "yoyo-service-public",
+              "orchestrated_by": "elasticdev",
+              "subnet_environment": "public"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjcYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        },
+        {
+          "index_key": 1,
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:subnet/subnet-0d88cf3bfc48e397a",
+            "assign_ipv6_address_on_creation": false,
+            "availability_zone": "us-east-1b",
+            "availability_zone_id": "use1-az2",
+            "cidr_block": "10.10.102.0/24",
+            "customer_owned_ipv4_pool": "",
+            "enable_dns64": false,
+            "enable_resource_name_dns_a_record_on_launch": false,
+            "enable_resource_name_dns_aaaa_record_on_launch": false,
+            "id": "subnet-0d88cf3bfc48e397a",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_association_id": "",
+            "ipv6_native": false,
+            "map_customer_owned_ip_on_launch": false,
+            "map_public_ip_on_launch": true,
+            "outpost_arn": "",
+            "owner_id": "5463465465",
+            "private_dns_hostname_type_on_launch": "ip-name",
+            "tags": {
+              "Name": "yoyo-service-public",
+              "subnet_environment": "public"
+            },
+            "tags_all": {
+              "Name": "yoyo-service-public",
+              "orchestrated_by": "elasticdev",
+              "subnet_environment": "public"
+            },
+            "timeouts": null,
+            "vpc_id": "vpc-07a6bdy43552a9f3"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2Y4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "aws_vpc.main"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "arn": "arn:aws:ec2:us-east-1:5463465465:vpc/vpc-07a6bdy43552a9f3",
+            "assign_generated_ipv6_cidr_block": false,
+            "cidr_block": "10.10.0.0/16",
+            "default_network_acl_id": "acl-073213ffdbd266c13",
+            "default_route_table_id": "rtb-08cacf76ba7b11836",
+            "default_security_group_id": "sg-08d52007855e7104d",
+            "dhcp_options_id": "dopt-18b28662",
+            "enable_classiclink": false,
+            "enable_classiclink_dns_support": false,
+            "enable_dns_hostnames": true,
+            "enable_dns_support": true,
+            "enable_network_address_usage_metrics": false,
+            "id": "vpc-07a6bdy43552a9f3",
+            "instance_tenancy": "default",
+            "ipv4_ipam_pool_id": null,
+            "ipv4_netmask_length": null,
+            "ipv6_association_id": "",
+            "ipv6_cidr_block": "",
+            "ipv6_cidr_block_network_border_group": "",
+            "ipv6_ipam_pool_id": "",
+            "ipv6_netmask_length": 0,
+            "main_route_table_id": "rtb-08cacf76ba7b11836",
+            "owner_id": "5463465465",
+            "tags": {
+              "Name": "yoyo",
+              "Product": "vpc"
+            },
+            "tags_all": {
+              "Name": "yoyo",
+              "Product": "vpc",
+              "orchestrated_by": "elasticdev"
+            }
+          },
+          "sensitive_attributes": [],
+          "private": "eyJzY2hlb2lvbiI6IjEifQ=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
