@@ -37,12 +37,12 @@ def run(stackargs):
     # set variables
     stack.set_variable("resource_type","vpc")
 
-    # if eks_cluster is provided, we modify the configs for eks
     _default_tags = {"vpc_name":stack.vpc_name}
     stack.set_variable("vpc_tags",_default_tags.copy())
     stack.set_variable("public_subnet_tags",_default_tags.copy())
     stack.set_variable("private_subnet_tags",_default_tags.copy())
 
+    # if eks_cluster is provided, we modify the configs
     # if we are using a vpc without a nat, the eks must be in public network
     # the internal lb must also be in public
     if stack.eks_cluster: 
