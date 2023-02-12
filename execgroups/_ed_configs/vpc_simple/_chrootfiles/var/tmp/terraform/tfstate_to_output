@@ -33,7 +33,7 @@ if not data:
 
 values = { "terraform_type":terraform_type,
            "main":True,
-           "resouce_type":resource_type,
+           "resource_type":resource_type,
            "provider":provider }
 
 # add values to the resource explicity
