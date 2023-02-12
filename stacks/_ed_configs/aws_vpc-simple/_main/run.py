@@ -61,8 +61,9 @@ def run(stackargs):
     ed_tf_settings = { "tf_exec_env_vars":tf_exec_env_vars,
                        "terraform_type":"aws_vpc",
                        "tf_exec_include_raw": "True",
-                       "tf_exec_resource_keys": "all",
-                       "tf_exec_postscript":"tfstate_to_output" }  # testtest777 - replace this with generic parser
+                       "tf_exec_resource_keys": "all" }
+
+                       #"tf_exec_postscript":"tfstate_to_output" }  # testtest777 - replace this with generic parser
 
     ed_resource_settings = { "resource_type":"vpc",
                              "provider":"aws" }

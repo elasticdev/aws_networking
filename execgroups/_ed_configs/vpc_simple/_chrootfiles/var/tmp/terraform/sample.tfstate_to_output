@@ -93,4 +93,5 @@ for resource in data["resources"]:
 
 # ref 34532045732
 #print_json(values)
+#return values
 to_jsonfile(values,"{}.json".format(terraform_type))
