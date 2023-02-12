@@ -25,9 +25,9 @@ def run(stackargs):
     stack.add_execgroup("elasticdev:::aws_networking::vpc_simple")
 
     # Add substack
-    stack.add_substack('elasticdev:::parse_terraform')
-    stack.add_substack('elasticdev:::aws_sg')
-    stack.add_substack('elasticdev:::publish_vpc_info',"publish_vpc")
+    stack.add_substack('elasticdev:::parse_terraform:1')
+    stack.add_substack('elasticdev:::aws_sg:1')
+    stack.add_substack('elasticdev:::publish_vpc_info',"publish_vpc:1")
 
     # Initialize 
     stack.init_variables()
