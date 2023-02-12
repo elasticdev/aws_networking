@@ -51,7 +51,8 @@ def run(stackargs):
         stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
 
-    # Set terraform environmental variables, TF_VAR*
+    # Set terraform environmental variables: TF_VAR*
+    # TF_VAR is optional prefix
     tf_exec_env_vars = { "vpc_name": stack.vpc_name,
                          "vpc_tags": json.dumps(stack.vpc_tags),
                          "aws_default_region": stack.aws_default_region,
@@ -80,7 +81,6 @@ def run(stackargs):
     env_vars["ed_tf_settings_hash".upper()] = stack.b64_encode(ed_tf_settings)
 
     # not necessary to set since it's set above in tf_exec_env_vars
-    env_vars["TF_VAR_aws_default_region"] = stack.aws_default_region
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["stateful_id".upper()] = stack.stateful_id
     env_vars["resource_type".upper()] = stack.resource_type
