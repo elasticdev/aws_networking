@@ -27,7 +27,7 @@ def run(stackargs):
     # Add substack
     stack.add_substack('elasticdev:::parse_terraform:1')
     stack.add_substack('elasticdev:::aws_sg:1')
-    stack.add_substack('elasticdev:::publish_vpc_info',"publish_vpc:1")
+    stack.add_substack('elasticdev:::publish_vpc_info:1',"publish_vpc")
 
     # Initialize 
     stack.init_variables()
