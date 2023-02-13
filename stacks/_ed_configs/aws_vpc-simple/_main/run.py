@@ -109,25 +109,26 @@ def run(stackargs):
     inputargs["stateful_id"] = stack.stateful_id
     stack.vpc_simple.insert(**inputargs)
 
+    # testtest777
     # parse terraform and insert subnets 
-    overide_values = { "src_resource_type":stack.resource_type,
-                       "src_provider":stack.provider,
-                       "src_resource_name":stack.vpc_name,
-                       "src_terraform_type":stack.terraform_type,
-                       "src_terraform_mode":"managed"}
+    #overide_values = { "src_resource_type":stack.resource_type,
+    #                   "src_provider":stack.provider,
+    #                   "src_resource_name":stack.vpc_name,
+    #                   "src_terraform_type":stack.terraform_type,
+    #                   "src_terraform_mode":"managed"}
 
-    overide_values["dst_resource_type"] = "subnet"
-    overide_values["must_exists"] = True
-    overide_values["aws_default_region"] = stack.aws_default_region
-    overide_values["mapping"] = json.dumps({"id":"subnet_id"})
-    overide_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
+    #overide_values["dst_resource_type"] = "subnet"
+    #overide_values["must_exists"] = True
+    #overide_values["aws_default_region"] = stack.aws_default_region
+    #overide_values["mapping"] = json.dumps({"id":"subnet_id"})
+    #overide_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
 
-    inputargs = {"overide_values":overide_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] ="Parse Terraform for subnets" 
-    inputargs["display"] = True
-    inputargs["display_hash"] = stack.get_hash_object(inputargs)
-    stack.parse_terraform.insert(**inputargs)
+    #inputargs = {"overide_values":overide_values}
+    #inputargs["automation_phase"] = "infrastructure"
+    #inputargs["human_description"] ="Parse Terraform for subnets" 
+    #inputargs["display"] = True
+    #inputargs["display_hash"] = stack.get_hash_object(inputargs)
+    #stack.parse_terraform.insert(**inputargs)
 
     # Add security groups
     default_values = { "vpc_name":stack.vpc_name,
