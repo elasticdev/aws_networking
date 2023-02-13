@@ -37,6 +37,7 @@ def run(stackargs):
     # set variables
     stack.set_variable("resource_type","vpc")
     stack.set_variable("terraform_type","aws_vpc")
+    stack.set_variable("provider","aws")
 
     _default_tags = {"vpc_name":stack.vpc_name}
     stack.set_variable("vpc_tags",_default_tags.copy())
@@ -65,7 +66,7 @@ def run(stackargs):
                        "tf_exec_resource_keys": "all" }
 
     ed_resource_settings = { "resource_type":stack.resource_type,
-                             "provider":"aws" }
+                             "provider":stack.provider }
 
     ed_resource_settings["resource_values_hash"] = stack.b64_encode({ "aws_default_region":stack.aws_default_region,
                                                                       "region":stack.aws_default_region })
@@ -109,19 +110,19 @@ def run(stackargs):
     stack.vpc_simple.insert(**inputargs)
 
     # parse terraform and insert subnets 
-    default_values = {"src_resource_type":stack.resource_type}
-    default_values["src_resource_name"] = stack.vpc_name
-    default_values["dst_resource_type"] = "subnet"
-    default_values["vpc"] = stack.vpc_name
-    default_values["must_exists"] = True
-    default_values["aws_default_region"] = stack.aws_default_region
-    default_values["provider"] = "aws"
-    default_values["terraform_type"] = "aws_subnet"
-    default_values["terraform_mode"] = "managed"
-    default_values["mapping"] = json.dumps({"id":"subnet_id"})
-    default_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
+    overide_values = { "src_resource_type":stack.resource_type,
+                       "src_provider":stack.provider,
+                       "src_resource_name":stack.vpc_name,
+                       "src_terraform_type":stack.terraform_type,
+                       "src_terraform_mode":"managed"}
 
-    inputargs = {"default_values":default_values}
+    overide_values["dst_resource_type"] = "subnet"
+    overide_values["must_exists"] = True
+    overide_values["aws_default_region"] = stack.aws_default_region
+    overide_values["mapping"] = json.dumps({"id":"subnet_id"})
+    overide_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
+
+    inputargs = {"overide_values":overide_values}
     inputargs["automation_phase"] = "infrastructure"
     inputargs["human_description"] ="Parse Terraform for subnets" 
     inputargs["display"] = True
@@ -129,8 +130,8 @@ def run(stackargs):
     stack.parse_terraform.insert(**inputargs)
 
     # Add security groups
-    default_values = {"vpc_name":stack.vpc_name}
-    default_values["aws_default_region"] = stack.aws_default_region
+    default_values = { "vpc_name":stack.vpc_name,
+                       "aws_default_region":stack.aws_default_region }
 
     if hasattr(stack,"tier_level"): 
         default_values["tier_level"] = stack.tier_level
