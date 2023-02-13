@@ -13,7 +13,7 @@ def run(stackargs):
     stack.parse.add_optional(key="aws_default_region",default="us-east-1")
 
     # docker image to execute terraform with
-    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:14")
+    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:14")  # testtest 777 upgrade
 
     # if eks_cluster is specified, then add the correct tags to the vpc 
     stack.parse.add_optional(key="eks_cluster",default="null")
@@ -36,6 +36,7 @@ def run(stackargs):
 
     # set variables
     stack.set_variable("resource_type","vpc")
+    stack.set_variable("terraform_type","aws_vpc")
 
     _default_tags = {"vpc_name":stack.vpc_name}
     stack.set_variable("vpc_tags",_default_tags.copy())
@@ -63,9 +64,7 @@ def run(stackargs):
                        "tf_exec_include_raw": "True",
                        "tf_exec_resource_keys": "all" }
 
-                       #"tf_exec_postscript":"tfstate_to_output" }  # testtest777 - replace this with generic parser
-
-    ed_resource_settings = { "resource_type":"vpc",
+    ed_resource_settings = { "resource_type":stack.resource_type,
                              "provider":"aws" }
 
     ed_resource_settings["resource_values_hash"] = stack.b64_encode({ "aws_default_region":stack.aws_default_region,
@@ -84,7 +83,7 @@ def run(stackargs):
     # not necessary to set since it's set above in tf_exec_env_vars
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["stateful_id".upper()] = stack.stateful_id
-    env_vars["resource_type".upper()] = stack.resource_type
+    env_vars["resource_type".upper()] = stack.resource_type  # testtest777 remove this
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
     env_vars["name".upper()] = stack.vpc_name
 
@@ -110,7 +109,7 @@ def run(stackargs):
     stack.vpc_simple.insert(**inputargs)
 
     # parse terraform and insert subnets 
-    default_values = {"src_resource_type":"vpc"}
+    default_values = {"src_resource_type":stack.resource_type}
     default_values["src_resource_name"] = stack.vpc_name
     default_values["dst_resource_type"] = "subnet"
     default_values["vpc"] = stack.vpc_name
@@ -132,14 +131,17 @@ def run(stackargs):
     # Add security groups
     default_values = {"vpc_name":stack.vpc_name}
     default_values["aws_default_region"] = stack.aws_default_region
-    if hasattr(stack,"tier_level"): default_values["tier_level"] = stack.tier_level
+
+    if hasattr(stack,"tier_level"): 
+        default_values["tier_level"] = stack.tier_level
 
     inputargs = {"default_values":default_values}
     inputargs["automation_phase"] = "infrastructure"
     inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
     stack.aws_sg.insert(display=True,**inputargs)
 
-    if not stack.publish_to_saas: return stack.get_results()
+    if not stack.publish_to_saas: 
+        return stack.get_results()
 
     # publish info on dashboard
     default_values = {"vpc_name":stack.vpc_name}
