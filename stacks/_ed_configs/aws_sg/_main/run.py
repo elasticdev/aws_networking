@@ -118,7 +118,7 @@ def run(stackargs):
 
     # parse terraform and insert security groups 
     default_values = {"src_resource_type":"security_group"}
-    default_values["src_resource_name"] = tf_main_name
+    default_values["src_resource_name"] = stack.tf_main_name
     default_values["dst_resource_type"] = "security_group"
     default_values["vpc"] = stack.vpc_name
     default_values["must_exists"] = True
