@@ -53,55 +53,80 @@ def run(stackargs):
         stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
 
-    # Set terraform environmental variables: TF_VAR*
-    # TF_VAR is optional prefix
-    tf_exec_env_vars = { "vpc_name": stack.vpc_name,
-                         "vpc_tags": json.dumps(stack.vpc_tags),
-                         "aws_default_region": stack.aws_default_region,
-                         }
+    ################################################
+    # Terraform vars and execution settings
+    # will automatically at TF_VAR_ as a prefix
+    ################################################
+    tf_vars = { "vpc_name": stack.vpc_name,
+                "vpc_tags": json.dumps(stack.vpc_tags),
+                "aws_default_region": stack.aws_default_region,
+                }
 
-    ed_tf_settings = { "tf_exec_env_vars":tf_exec_env_vars,
-                       "terraform_type":"aws_vpc",
-                       "tf_exec_include_raw": "True",
-                       "tf_exec_resource_keys": "all" }
+    tf_settings = { "tf_vars":tf_vars,
+                    "terraform_type":"aws_vpc",
+                    "tf_exec_include_raw": "True",
+                    "tf_exec_resource_keys": "all" }
 
-    ed_resource_settings = { "resource_type":stack.resource_type,
-                             "provider":stack.provider }
-
-    ed_resource_settings["resource_values_hash"] = stack.b64_encode({ "aws_default_region":stack.aws_default_region,
-                                                                      "region":stack.aws_default_region })
+    resource_values = { "aws_default_region":stack.aws_default_region,
+                        "region":stack.aws_default_region }
 
     # testtest777 labels additions
-    ed_resource_settings["resource_labels_hash"] = stack.b64_encode({ "keyboard":"querty",
-                                                                      "vendor":"compaq" })
-    if stack.cloud_tags_hash: 
-        tf_exec_env_vars["cloud_tags"] = json.dumps(stack.b64_decode(stack.cloud_tags_hash))
+    resource_labels = { "keyboard":"querty",
+                        "vendor":"compaq" }
 
-    env_vars = { "METHOD":"create" }
+    ################################################
+    # Docker vars and execution settings
+    # will automatically be upper case
+    ################################################
+    docker_env_vars = { "method": "create",
+                        "aws_default_region": stack.aws_default_region,
+                        "stateful_id":stack.stateful_id,
+                        "resource_tags": "{},{},{}".format(stack.resource_type, 
+                                                           stack.vpc_name, 
+                                                           stack.aws_default_region),
+                        "name": stack.vpc_name }
+
+    # include env vars in the host machine and pass it to the 
+    # docker running container
+    docker_include_env_vars_keys = [ "aws_access_key_id",
+                                     "aws_secret_access_key" ]
+
+    docker_settings = { "env_vars":docker_env_vars,
+                        "include_env_vars_keys": docker_include_env_vars_keys }
+
+    ################################################
+    # ElasticDev Resource Setting
+    # to wrap all the variables
+    # into a b64 string
+    ################################################
+
+    ed_resource_settings = { "tf_settings":tf_settings,
+                             "docker_settings":docker_settings,
+                             "provider":stack.provider,
+                             "resource_type":stack.resource_type,
+                             "resource_values":resource_values,
+                             "resource_labels":resource_labels,
+                             }
+
+    ################################################
+    # Env Variables at execgroup run time
+    ################################################
+    env_vars = { "STATEFUL_ID":stack.stateful_id}
     env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
-    env_vars["ed_tf_settings_hash".upper()] = stack.b64_encode(ed_tf_settings)
-
-    # not necessary to set since it's set above in tf_exec_env_vars
     env_vars["aws_default_region".upper()] = stack.aws_default_region
-    env_vars["stateful_id".upper()] = stack.stateful_id
-    env_vars["resource_type".upper()] = stack.resource_type  # testtest777 remove this
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
-    env_vars["name".upper()] = stack.vpc_name
-
     env_vars["use_docker".upper()] = True
     env_vars["CLOBBER"] = True
 
-    env_vars["RESOURCE_TAGS"] = "{},{},{}".format(stack.resource_type, 
-                                                  stack.vpc_name, 
-                                                  stack.aws_default_region)
+    # from existing env vars, pass to docker run time
+    #env_vars["DOCKER_ENV_FIELDS"] = ",".join([ "AWS_ACCESS_KEY_ID",
+    #                                           "AWS_SECRET_ACCESS_KEY" ]
+    #env_vars["name".upper()] = stack.vpc_name
 
     # env_vars that will be passed to
     # the docker run environment as .env
-    docker_env_fields_keys = env_vars.keys()
-    docker_env_fields_keys.append("AWS_ACCESS_KEY_ID")
-    docker_env_fields_keys.append("AWS_SECRET_ACCESS_KEY")
-    docker_env_fields_keys.remove("METHOD")
-    env_vars["DOCKER_ENV_FIELDS"] = ",".join(docker_env_fields_keys)
+    #docker_env_fields_keys = env_vars.keys()
+    #env_vars["DOCKER_ENV_FIELDS"] = ",".join(docker_env_fields_keys)
 
     inputargs = {"display":True}
     inputargs["env_vars"] = json.dumps(env_vars)
@@ -131,26 +156,26 @@ def run(stackargs):
     #stack.parse_terraform.insert(**inputargs)
 
     # Add security groups
-    default_values = { "vpc_name":stack.vpc_name,
-                       "cloud_tags_hash":stack.cloud_tags_hash,
-                       "aws_default_region":stack.aws_default_region }
+    #default_values = { "vpc_name":stack.vpc_name,
+    #                   "cloud_tags_hash":stack.cloud_tags_hash,
+    #                   "aws_default_region":stack.aws_default_region }
 
-    if hasattr(stack,"tier_level"): 
-        default_values["tier_level"] = stack.tier_level
+    #if hasattr(stack,"tier_level"): 
+    #    default_values["tier_level"] = stack.tier_level
 
-    inputargs = {"default_values":default_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
-    stack.aws_sg.insert(display=True,**inputargs)
+    #inputargs = {"default_values":default_values}
+    #inputargs["automation_phase"] = "infrastructure"
+    #inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
+    #stack.aws_sg.insert(display=True,**inputargs)
 
-    if not stack.publish_to_saas: 
-        return stack.get_results()
+    #if not stack.publish_to_saas: 
+    #    return stack.get_results()
 
-    # publish info on dashboard
-    default_values = {"vpc_name":stack.vpc_name}
-    inputargs = {"default_values":default_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
-    stack.publish_vpc.insert(display=True,**inputargs)
+    ## publish info on dashboard
+    #default_values = {"vpc_name":stack.vpc_name}
+    #inputargs = {"default_values":default_values}
+    #inputargs["automation_phase"] = "infrastructure"
+    #inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
+    #stack.publish_vpc.insert(display=True,**inputargs)
 
     return stack.get_results()
