@@ -23,9 +23,3 @@ variable "aws_default_region" {
 
 variable "cloud_tags" {
 }
-
-#variable "lambda_arn" {
-#variable "lambda_arn" {
-#    default = "arn:aws:lambda:eu-west-1:3452345432:function:process-webhook"
-#}
-

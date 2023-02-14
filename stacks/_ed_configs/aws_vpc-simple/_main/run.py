@@ -132,6 +132,7 @@ def run(stackargs):
 
     # Add security groups
     default_values = { "vpc_name":stack.vpc_name,
+                       "cloud_tags_hash":stack.cloud_tags_hash,
                        "aws_default_region":stack.aws_default_region }
 
     if hasattr(stack,"tier_level"): 

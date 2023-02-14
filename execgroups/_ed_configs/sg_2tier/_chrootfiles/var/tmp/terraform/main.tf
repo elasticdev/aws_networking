@@ -26,9 +26,13 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "bastion"
-  }
+  tags = merge(
+    var.cloud_tags,
+    {
+      Name = "${var.vpc_name}-bastion"
+      Product = "security_group"
+    },
+  )
 }
 
 resource "aws_security_group" "web" {
@@ -67,9 +71,13 @@ resource "aws_security_group" "web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "web"
-  }
+  tags = merge(
+    var.cloud_tags,
+    {
+      Name = "${var.vpc_name}-web"
+      Product = "security_group"
+    },
+  )
 }
 
 resource "aws_security_group" "database" {
@@ -100,9 +108,13 @@ resource "aws_security_group" "database" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Name = "database"
-  }
+  tags = merge(
+    var.cloud_tags,
+    {
+      Name = "${var.vpc_name}-database"
+      Product = "security_group"
+    },
+  )
 }
 
 resource "aws_security_group_rule" "web_allow_tcp" {
