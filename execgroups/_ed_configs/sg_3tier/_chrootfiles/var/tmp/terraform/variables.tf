@@ -13,5 +13,7 @@ variable "aws_default_region" {
 }
 
 variable "cloud_tags" {
+  description = "additional tags as a map"
+  type        = map(string)
+  default     = {}
 }
-
