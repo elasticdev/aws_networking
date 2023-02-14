@@ -111,7 +111,9 @@ def run(stackargs):
     ################################################
     # Env Variables at execgroup run time
     ################################################
-    env_vars = { "STATEFUL_ID":stack.stateful_id}
+    env_vars = { "STATEFUL_ID":stack.stateful_id,
+                 "METHOD":"create" }
+
     env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
