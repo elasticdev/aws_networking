@@ -60,8 +60,7 @@ def run(stackargs):
                        "tf_exec_include_raw": "True" }
 
     _default_tags = { "vpc_name":stack.vpc_name,
-                      "vpc_id":stack.vpc_id,
-                      "src_resource_name": stack.tf_main_name }
+                      "vpc_id":stack.vpc_id }
 
     ed_resource_settings = { "resource_type":stack.resource_type,
                              "provider":"aws" }
@@ -116,30 +115,32 @@ def run(stackargs):
     else:
         stack.sg_3tier.insert(**inputargs)
 
+    # revisit 
+    # testtest777
     # parse terraform and insert security groups 
-    default_values = {"src_resource_type":"security_group"}
-    default_values["src_resource_name"] = stack.tf_main_name
-    default_values["dst_resource_type"] = "security_group"
-    default_values["vpc"] = stack.vpc_name
-    default_values["must_exists"] = True
-    default_values["aws_default_region"] = stack.aws_default_region
-    default_values["provider"] = "aws"
-    default_values["terraform_type"] = stack.terraform_type,
-    default_values["terraform_mode"] = "managed"
-    default_values["mapping"] = json.dumps({"id":"sg_id"})
-    default_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
+    #default_values = {"src_resource_type":"security_group"}
+    #default_values["src_resource_name"] = stack.tf_main_name
+    #default_values["dst_resource_type"] = "security_group"
+    #default_values["vpc"] = stack.vpc_name
+    #default_values["must_exists"] = True
+    #default_values["aws_default_region"] = stack.aws_default_region
+    #default_values["provider"] = "aws"
+    #default_values["terraform_type"] = stack.terraform_type,
+    #default_values["terraform_mode"] = "managed"
+    #default_values["mapping"] = json.dumps({"id":"sg_id"})
+    #default_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
 
-    if stack.labels: 
-        default_values["labels"] = stack.labels
+    #if stack.labels: 
+    #    default_values["labels"] = stack.labels
 
-    if stack.tags: 
-        default_values["tags"] = stack.tags
+    #if stack.tags: 
+    #    default_values["tags"] = stack.tags
 
-    inputargs = {"default_values":default_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] ="Parse Terraform for security groups" 
-    inputargs["display"] = True
-    inputargs["display_hash"] = stack.get_hash_object(inputargs)
-    stack.parse_terraform.insert(**inputargs)
+    #inputargs = {"default_values":default_values}
+    #inputargs["automation_phase"] = "infrastructure"
+    #inputargs["human_description"] ="Parse Terraform for security groups" 
+    #inputargs["display"] = True
+    #inputargs["display_hash"] = stack.get_hash_object(inputargs)
+    #stack.parse_terraform.insert(**inputargs)
 
     return stack.get_results()
