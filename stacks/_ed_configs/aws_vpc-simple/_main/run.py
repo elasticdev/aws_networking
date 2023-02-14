@@ -64,8 +64,8 @@ def run(stackargs):
 
     tf_settings = { "tf_vars":tf_vars,
                     "terraform_type":"aws_vpc",
-                    "tf_exec_include_raw": "True",
-                    "tf_exec_resource_keys": "all" }
+                    "tfstate_raw": "True",
+                    "resource_keys": "all" }
 
     resource_values = { "aws_default_region":stack.aws_default_region,
                         "region":stack.aws_default_region }
