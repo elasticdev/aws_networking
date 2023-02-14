@@ -71,7 +71,7 @@ def run(stackargs):
                                                                       "region":stack.aws_default_region })
 
     if stack.cloud_tags_hash: 
-        tf_exec_env_vars["cloud_tags"] = dict(_default_tags,**json.dumps(stack.b64_decode(stack.cloud_tags_hash)))
+        tf_exec_env_vars["cloud_tags"] = json.dumps(dict(_default_tags,**(stack.b64_decode(stack.cloud_tags_hash))))
 
     env_vars = { "METHOD":"create" }
     env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
