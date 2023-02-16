@@ -18,27 +18,21 @@ class EdResourceSettings(object):
         # will automatically be upper case
         ################################################
     
-        docker_env_vars = { "method": "create",
-                            "aws_default_region": self.stack.aws_default_region,
-                            "stateful_id":self.stack.stateful_id,
-                            "resource_tags": "{},{},{}".format(self.stack.resource_type, 
-                                                               self.stack.vpc_name, 
-                                                               self.stack.aws_default_region),
-                            "name": self.stack.vpc_name }
+        env_vars = { "method": "create",
+                     "aws_default_region": self.stack.aws_default_region,
+                     "stateful_id":self.stack.stateful_id,
+                     "resource_tags": "{},{},{}".format(self.stack.resource_type, 
+                                                        self.stack.vpc_name, 
+                                                        self.stack.aws_default_region),
+                     "name": self.stack.vpc_name }
     
         # include env vars in the host machine and pass it to the 
         # docker running container
-        docker_include_env_vars_keys = [ "aws_access_key_id",
-                                         "aws_secret_access_key" ]
+        include_env_vars_keys = [ "aws_access_key_id",
+                                  "aws_secret_access_key" ]
     
-        self.docker_settings = { "env_vars":docker_env_vars,
-                                 "include_env_vars_keys": docker_include_env_vars_keys }
-    
-    def _get_resource_labels(self):
-    
-        # testtest777 labels additions
-        self.resource_labels = { "keyboard":"querty",
-                                 "vendor":"compaq" }
+        self.docker_settings = { "env_vars":env_vars,
+                                 "include_env_vars_keys":include_env_vars_keys }
     
     def _get_tf_settings(self):
     
@@ -58,6 +52,10 @@ class EdResourceSettings(object):
     
     def get(self):
 
+        # testtest777 labels additions
+        resource_labels = { "keyboard":"querty",
+                            "vendor":"compaq" }
+    
         ################################################
         # ElasticDev Resource Setting
         # to wrap all the variables
@@ -66,12 +64,12 @@ class EdResourceSettings(object):
         ed_resource_settings = { "tf_settings":self._get_tf_settings(),
                                  "docker_settings":self._get_docker_settings(),
                                  "resource_values":self._get_resource_values_to_add(),
-                                 "resource_labels":self._get_resource_labels(),
+                                 "resource_labels":resource_labels,
                                  "resource_type":self.stack.resource_type,
                                  "provider":self.stack.provider
                                  }
 
-        return ed_resource_settings
+        return self.stack.b64_encode(ed_resource_settings)
 
 def run(stackargs):
 
@@ -135,7 +133,7 @@ def run(stackargs):
     env_vars = { "STATEFUL_ID":stack.stateful_id,
                  "METHOD":"create" }
 
-    env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(_ed_resource_settings.get())
+    env_vars["ed_resource_settings_hash".upper()] = _ed_resource_settings.get()
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
     env_vars["use_docker".upper()] = True
