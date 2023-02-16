@@ -1,6 +1,79 @@
-def run(stackargs):
+import json
 
-    import json
+class EdResourceSettings(object):
+
+    def __init__(self,stack):
+
+        self.stack = stack
+
+    def _get_resource_values_to_add(self):
+    
+        self.resource_values = { "aws_default_region":self.stack.aws_default_region,
+                                 "region":self.stack.aws_default_region }
+    
+    def _get_docker_settings(self):
+    
+        ################################################
+        # Docker vars and execution settings
+        # will automatically be upper case
+        ################################################
+    
+        docker_env_vars = { "method": "create",
+                            "aws_default_region": self.stack.aws_default_region,
+                            "stateful_id":self.stack.stateful_id,
+                            "resource_tags": "{},{},{}".format(self.stack.resource_type, 
+                                                               self.stack.vpc_name, 
+                                                               self.stack.aws_default_region),
+                            "name": self.stack.vpc_name }
+    
+        # include env vars in the host machine and pass it to the 
+        # docker running container
+        docker_include_env_vars_keys = [ "aws_access_key_id",
+                                         "aws_secret_access_key" ]
+    
+        self.docker_settings = { "env_vars":docker_env_vars,
+                                 "include_env_vars_keys": docker_include_env_vars_keys }
+    
+    def _get_resource_labels(self):
+    
+        # testtest777 labels additions
+        self.resource_labels = { "keyboard":"querty",
+                                 "vendor":"compaq" }
+    
+    def _get_tf_settings(self):
+    
+        ################################################
+        # Terraform vars and execution settings
+        # will automatically at TF_VAR_ as a prefix
+        ################################################
+        tf_vars = { "vpc_name": self.stack.vpc_name,
+                    "vpc_tags": json.dumps(self.stack.vpc_tags),
+                    "aws_default_region": self.stack.aws_default_region,
+                    }
+    
+        self.tf_settings = { "tf_vars":tf_vars,
+                             "terraform_type":"aws_vpc",
+                             "tfstate_raw": "True",
+                             "resource_keys": "all" }
+    
+    def get(self):
+
+        ################################################
+        # ElasticDev Resource Setting
+        # to wrap all the variables
+        # into a b64 string
+        ################################################
+        ed_resource_settings = { "tf_settings":self._get_tf_settings(),
+                                 "docker_settings":self._get_docker_settings(),
+                                 "resource_values":self._get_resource_values_to_add(),
+                                 "resource_labels":self._get_resource_labels(),
+                                 "resource_type":self.stack.resource_type,
+                                 "provider":self.stack.provider
+                                 }
+
+        return ed_resource_settings
+
+def run(stackargs):
 
     # instantiate authoring stack
     stack = newStack(stackargs)
@@ -54,81 +127,19 @@ def run(stackargs):
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
 
     ################################################
-    # Terraform vars and execution settings
-    # will automatically at TF_VAR_ as a prefix
-    ################################################
-    tf_vars = { "vpc_name": stack.vpc_name,
-                "vpc_tags": json.dumps(stack.vpc_tags),
-                "aws_default_region": stack.aws_default_region,
-                }
-
-    tf_settings = { "tf_vars":tf_vars,
-                    "terraform_type":"aws_vpc",
-                    "tfstate_raw": "True",
-                    "resource_keys": "all" }
-
-    resource_values = { "aws_default_region":stack.aws_default_region,
-                        "region":stack.aws_default_region }
-
-    # testtest777 labels additions
-    resource_labels = { "keyboard":"querty",
-                        "vendor":"compaq" }
-
-    ################################################
-    # Docker vars and execution settings
-    # will automatically be upper case
-    ################################################
-    docker_env_vars = { "method": "create",
-                        "aws_default_region": stack.aws_default_region,
-                        "stateful_id":stack.stateful_id,
-                        "resource_tags": "{},{},{}".format(stack.resource_type, 
-                                                           stack.vpc_name, 
-                                                           stack.aws_default_region),
-                        "name": stack.vpc_name }
-
-    # include env vars in the host machine and pass it to the 
-    # docker running container
-    docker_include_env_vars_keys = [ "aws_access_key_id",
-                                     "aws_secret_access_key" ]
-
-    docker_settings = { "env_vars":docker_env_vars,
-                        "include_env_vars_keys": docker_include_env_vars_keys }
-
-    ################################################
-    # ElasticDev Resource Setting
-    # to wrap all the variables
-    # into a b64 string
-    ################################################
-
-    ed_resource_settings = { "tf_settings":tf_settings,
-                             "docker_settings":docker_settings,
-                             "provider":stack.provider,
-                             "resource_type":stack.resource_type,
-                             "resource_values":resource_values,
-                             "resource_labels":resource_labels,
-                             }
-
-    ################################################
     # Env Variables at execgroup run time
     ################################################
+
+    _ed_resource_settings = EdResourceSettings(stack)
+
     env_vars = { "STATEFUL_ID":stack.stateful_id,
                  "METHOD":"create" }
 
-    env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
+    env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(_ed_resource_settings.get())
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
     env_vars["use_docker".upper()] = True
     env_vars["CLOBBER"] = True
-
-    # from existing env vars, pass to docker run time
-    #env_vars["DOCKER_ENV_FIELDS"] = ",".join([ "AWS_ACCESS_KEY_ID",
-    #                                           "AWS_SECRET_ACCESS_KEY" ]
-    #env_vars["name".upper()] = stack.vpc_name
-
-    # env_vars that will be passed to
-    # the docker run environment as .env
-    #docker_env_fields_keys = env_vars.keys()
-    #env_vars["DOCKER_ENV_FIELDS"] = ",".join(docker_env_fields_keys)
 
     inputargs = {"display":True}
     inputargs["env_vars"] = json.dumps(env_vars)
