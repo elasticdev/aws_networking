@@ -2,15 +2,17 @@ import json
 
 class EdResourceSettings(object):
 
-    def __init__(self,stack):
+    def __init__(self,**kwargs):
 
-        self.stack = stack
+        self.stack = kwargs["stack"]
 
     def _get_resource_values_to_add(self):
     
         self.resource_values = { "aws_default_region":self.stack.aws_default_region,
                                  "region":self.stack.aws_default_region }
     
+        return self.resource_values
+
     def _get_docker_settings(self):
     
         ################################################
@@ -33,6 +35,8 @@ class EdResourceSettings(object):
     
         self.docker_settings = { "env_vars":env_vars,
                                  "include_env_vars_keys":include_env_vars_keys }
+
+        return self.docker_settings
     
     def _get_tf_settings(self):
     
@@ -50,6 +54,8 @@ class EdResourceSettings(object):
                              "tfstate_raw": "True",
                              "resource_keys": "all" }
     
+        return self.tf_settings
+
     def get(self):
 
         # testtest777 labels additions
@@ -128,7 +134,7 @@ def run(stackargs):
     # Env Variables at execgroup run time
     ################################################
 
-    _ed_resource_settings = EdResourceSettings(stack)
+    _ed_resource_settings = EdResourceSettings(stack=stack)
 
     env_vars = { "STATEFUL_ID":stack.stateful_id,
                  "METHOD":"create" }
