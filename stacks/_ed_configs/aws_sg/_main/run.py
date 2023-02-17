@@ -103,10 +103,12 @@ def run(stackargs):
     stack.init_execgroups()
     stack.init_substacks()
 
+    stack.set_variable("provider","aws")
+
     # get vpc_id
     _lookup = { "must_exists":True,
                 "resource_type": "vpc",
-                "provider": "aws",
+                "provider": stack.provider,
                 "vpc": stack.vpc_name,
                 "name": stack.vpc_name,
                 "region": stack.aws_default_region,
