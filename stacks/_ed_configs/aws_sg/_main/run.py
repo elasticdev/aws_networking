@@ -1,6 +1,76 @@
-def run(stackargs):
+import json
 
-    import json
+class EdResourceSettings(object):
+
+    def __init__(self,**kwargs):
+
+        self.stack = kwargs["stack"]
+
+    def _get_resource_values_to_add(self):
+    
+        self.resource_values = { "aws_default_region":self.stack.aws_default_region,
+                                 "name":self.stack.tf_main_name,
+                                 "region":self.stack.aws_default_region }
+    
+        return self.resource_values
+
+    def _get_docker_settings(self):
+    
+        env_vars = { "method": "create",
+                     "aws_default_region": self.stack.aws_default_region,
+                     "stateful_id":self.stack.stateful_id,
+                     "resource_tags": "{},{},{},{}".format(self.stack.resource_type, 
+                                                           self.stack.vpc_name, 
+                                                           self.stack.vpc_name, 
+                                                           self.stack.aws_default_region),
+                     "name": self.stack.vpc_name }
+    
+        # include env vars in the host machine and pass it to the 
+        # docker running container
+        include_env_vars_keys = [ "aws_access_key_id",
+                                  "aws_secret_access_key" ]
+    
+        self.docker_settings = { "env_vars":env_vars,
+                                 "include_env_vars_keys":include_env_vars_keys }
+
+        return self.docker_settings
+    
+    def _get_tf_settings(self):
+    
+        _default_tags = { "vpc_name":self.stack.vpc_name,
+                          "vpc_id":self.stack.vpc_id }
+
+        tf_vars = { "vpc_name": self.stack.vpc_name,
+                    "vpc_id":self.stack.vpc_id,
+                    "aws_default_region": self.stack.aws_default_region }
+
+        if self.stack.cloud_tags_hash:
+            tf_vars["cloud_tags"] = json.dumps(dict(_default_tags,**(self.stack.b64_decode(self.stack.cloud_tags_hash))))
+
+        self.tf_settings = { "tf_vars":tf_vars,
+                             "terraform_type":self.stack.terraform_type,
+                             "tfstate_raw": "True",
+                             "resource_keys": "all" }
+    
+        return self.tf_settings
+
+    def get(self):
+
+        ################################################
+        # ElasticDev Resource Setting
+        # to wrap all the variables
+        # into a b64 string
+        ################################################
+        ed_resource_settings = { "tf_settings":self._get_tf_settings(),
+                                 "docker_settings":self._get_docker_settings(),
+                                 "resource_values":self._get_resource_values_to_add(),
+                                 "resource_type":self.stack.resource_type,
+                                 "provider":self.stack.provider
+                                 }
+
+        return self.stack.b64_encode(ed_resource_settings)
+
+def run(stackargs):
 
     # instantiate authoring stack
     stack = newStack(stackargs)
@@ -33,13 +103,15 @@ def run(stackargs):
     stack.init_execgroups()
     stack.init_substacks()
 
-    _lookup = {"must_exists":True}
-    _lookup["resource_type"] = "vpc"
-    _lookup["provider"] = "aws"
-    _lookup["vpc"] = stack.vpc_name
-    _lookup["name"] = stack.vpc_name
-    _lookup["region"] = stack.aws_default_region
-    _lookup["search_keys"] = "vpc"
+    # get vpc_id
+    _lookup = { "must_exists":True,
+                "resource_type": "vpc",
+                "provider": "aws",
+                "vpc": stack.vpc_name,
+                "name": stack.vpc_name,
+                "region": stack.aws_default_region,
+                "search_keys": "vpc" }
+
     vpc_id = list(stack.get_resource(**_lookup))[0]["vpc_id"]
 
     # set variables
@@ -48,55 +120,17 @@ def run(stackargs):
     stack.set_variable("tf_main_name","{}-security-group-tf".format(stack.vpc_name))
     stack.set_variable("terraform_type","aws_security_group")
 
-    # Execute execgroup
-    # Set terraform environmental variables: TF_VAR*
-    # TF_VAR is optional prefix
-    tf_exec_env_vars = { "vpc_name": stack.vpc_name,
-                         "vpc_id":stack.vpc_id,
-                         "aws_default_region": stack.aws_default_region }
+    # set ed/tf resource settings
+    _ed_resource_settings = EdResourceSettings(stack=stack)
 
-    ed_tf_settings = { "tf_exec_env_vars":tf_exec_env_vars,
-                       "terraform_type":stack.terraform_type,
-                       "tf_exec_include_raw": "True" }
+    env_vars = { "STATEFUL_ID":stack.stateful_id,
+                 "METHOD":"create" }
 
-    _default_tags = { "vpc_name":stack.vpc_name,
-                      "vpc_id":stack.vpc_id }
-
-    ed_resource_settings = { "resource_type":stack.resource_type,
-                             "provider":"aws" }
-
-    ed_resource_settings["resource_values_hash"] = stack.b64_encode({ "aws_default_region":stack.aws_default_region,
-                                                                      "name":stack.tf_main_name,
-                                                                      "tf_main_name":stack.tf_main_name,
-                                                                      "region":stack.aws_default_region })
-
-    if stack.cloud_tags_hash: 
-        tf_exec_env_vars["cloud_tags"] = json.dumps(stack.b64_decode(stack.cloud_tags_hash))
-        #tf_exec_env_vars["cloud_tags"] = json.dumps(dict(_default_tags,**(stack.b64_decode(stack.cloud_tags_hash))))
-
-    env_vars = { "METHOD":"create" }
-    env_vars["ed_resource_settings_hash".upper()] = stack.b64_encode(ed_resource_settings)
-    env_vars["ed_tf_settings_hash".upper()] = stack.b64_encode(ed_tf_settings)
-
+    env_vars["ed_resource_settings_hash".upper()] = _ed_resource_settings.get()
     env_vars["aws_default_region".upper()] = stack.aws_default_region
-    env_vars["stateful_id".upper()] = stack.stateful_id
-    env_vars["resource_type".upper()] = stack.resource_type  # testtest777 remove this
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
-
     env_vars["use_docker".upper()] = True
     env_vars["CLOBBER"] = True
-
-    env_vars["RESOURCE_TAGS"] = "{},{},{},{}".format(stack.resource_type, 
-                                                     stack.vpc_id, 
-                                                     stack.vpc_name, 
-                                                     stack.aws_default_region)
-
-    docker_env_fields_keys = env_vars.keys()
-    docker_env_fields_keys.append("AWS_ACCESS_KEY_ID")
-    docker_env_fields_keys.append("AWS_SECRET_ACCESS_KEY")
-    docker_env_fields_keys.remove("METHOD")
-
-    env_vars["DOCKER_ENV_FIELDS"] = ",".join(docker_env_fields_keys)
 
     inputargs = {"display":True}
     inputargs["env_vars"] = json.dumps(env_vars)

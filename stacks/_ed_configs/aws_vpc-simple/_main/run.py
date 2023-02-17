@@ -49,6 +49,9 @@ class EdResourceSettings(object):
                     "aws_default_region": self.stack.aws_default_region,
                     }
     
+        if self.stack.cloud_tags_hash:
+            tf_vars["cloud_tags"] = json.dumps(self.stack.b64_decode(self.stack.cloud_tags_hash))
+
         self.tf_settings = { "tf_vars":tf_vars,
                              "terraform_type":"aws_vpc",
                              "tfstate_raw": "True",
@@ -173,17 +176,17 @@ def run(stackargs):
     #stack.parse_terraform.insert(**inputargs)
 
     # Add security groups
-    #default_values = { "vpc_name":stack.vpc_name,
-    #                   "cloud_tags_hash":stack.cloud_tags_hash,
-    #                   "aws_default_region":stack.aws_default_region }
+    default_values = { "vpc_name":stack.vpc_name,
+                       "cloud_tags_hash":stack.cloud_tags_hash,
+                       "aws_default_region":stack.aws_default_region }
 
-    #if hasattr(stack,"tier_level"): 
-    #    default_values["tier_level"] = stack.tier_level
+    if hasattr(stack,"tier_level"): 
+        default_values["tier_level"] = stack.tier_level
 
-    #inputargs = {"default_values":default_values}
-    #inputargs["automation_phase"] = "infrastructure"
-    #inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
-    #stack.aws_sg.insert(display=True,**inputargs)
+    inputargs = {"default_values":default_values}
+    inputargs["automation_phase"] = "infrastructure"
+    inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
+    stack.aws_sg.insert(display=True,**inputargs)
 
     #if not stack.publish_to_saas: 
     #    return stack.get_results()
