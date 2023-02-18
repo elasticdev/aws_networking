@@ -73,7 +73,6 @@ if tf_exec_include_raw:
 
     values["raw"] = {"terraform":b64_encode(raw)}
 
-# testtest777
 if os.environ.get("AWS_DEFAULT_REGION"): 
     values["region"] = os.environ["AWS_DEFAULT_REGION"]
     values["aws_default_region"] = os.environ["AWS_DEFAULT_REGION"]

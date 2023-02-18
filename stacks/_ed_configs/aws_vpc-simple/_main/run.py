@@ -61,9 +61,8 @@ class EdResourceSettings(object):
 
     def get(self):
 
-        # testtest777 labels additions
-        resource_labels = { "keyboard":"querty",
-                            "vendor":"compaq" }
+        #resource_labels = { "keyboard":"querty",
+        #                    "vendor":"ibm" }
     
         ################################################
         # ElasticDev Resource Setting
@@ -73,10 +72,11 @@ class EdResourceSettings(object):
         ed_resource_settings = { "tf_settings":self._get_tf_settings(),
                                  "docker_settings":self._get_docker_settings(),
                                  "resource_values":self._get_resource_values_to_add(),
-                                 "resource_labels":resource_labels,
                                  "resource_type":self.stack.resource_type,
                                  "provider":self.stack.provider
                                  }
+
+        #"resource_labels":resource_labels,
 
         return self.stack.b64_encode(ed_resource_settings)
 
@@ -156,24 +156,24 @@ def run(stackargs):
 
     # testtest777
     # parse terraform and insert subnets 
-    #overide_values = { "src_resource_type":stack.resource_type,
-    #                   "src_provider":stack.provider,
-    #                   "src_resource_name":stack.vpc_name,
-    #                   "src_terraform_type":stack.terraform_type,
-    #                   "src_terraform_mode":"managed"}
+    overide_values = { "src_resource_type":stack.resource_type,
+                       "src_provider":stack.provider,
+                       "src_resource_name":stack.vpc_name,
+                       "src_terraform_type":stack.terraform_type,
+                       "src_terraform_mode":"managed"}
 
-    #overide_values["dst_resource_type"] = "subnet"
-    #overide_values["must_exists"] = True
-    #overide_values["aws_default_region"] = stack.aws_default_region
-    #overide_values["mapping"] = json.dumps({"id":"subnet_id"})
-    #overide_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
+    overide_values["dst_resource_type"] = "subnet"
+    overide_values["mapping"] = json.dumps({"id":"subnet_id"})  # this will map the subnet_id to id
+    overide_values["must_exists"] = True
+    overide_values["aws_default_region"] = stack.aws_default_region
+    overide_values["add_values"] = json.dumps({"vpc":stack.vpc_name})
 
-    #inputargs = {"overide_values":overide_values}
-    #inputargs["automation_phase"] = "infrastructure"
-    #inputargs["human_description"] ="Parse Terraform for subnets" 
-    #inputargs["display"] = True
-    #inputargs["display_hash"] = stack.get_hash_object(inputargs)
-    #stack.parse_terraform.insert(**inputargs)
+    inputargs = {"overide_values":overide_values}
+    inputargs["automation_phase"] = "infrastructure"
+    inputargs["human_description"] ="Parse Terraform for subnets" 
+    inputargs["display"] = True
+    inputargs["display_hash"] = stack.get_hash_object(inputargs)
+    stack.parse_terraform.insert(**inputargs)
 
     # Add security groups
     default_values = { "vpc_name":stack.vpc_name,
@@ -188,14 +188,14 @@ def run(stackargs):
     inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
     stack.aws_sg.insert(display=True,**inputargs)
 
-    #if not stack.publish_to_saas: 
-    #    return stack.get_results()
+    if not stack.publish_to_saas: 
+        return stack.get_results()
 
-    ## publish info on dashboard
-    #default_values = {"vpc_name":stack.vpc_name}
-    #inputargs = {"default_values":default_values}
-    #inputargs["automation_phase"] = "infrastructure"
-    #inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
-    #stack.publish_vpc.insert(display=True,**inputargs)
+    # publish info on dashboard
+    default_values = {"vpc_name":stack.vpc_name}
+    inputargs = {"default_values":default_values}
+    inputargs["automation_phase"] = "infrastructure"
+    inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
+    stack.publish_vpc.insert(display=True,**inputargs)
 
     return stack.get_results()
