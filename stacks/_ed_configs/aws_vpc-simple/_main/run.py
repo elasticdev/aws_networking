@@ -159,8 +159,7 @@ def run(stackargs):
     overide_values = { "src_resource_type":stack.resource_type,
                        "src_provider":stack.provider,
                        "src_resource_name":stack.vpc_name,
-                       "dst_terraform_type":"aws_subnet",
-                       "dst_terraform_mode":"managed"}
+                       "dst_terraform_type":"aws_subnet" }
 
     overide_values["dst_resource_type"] = "subnet"
     overide_values["mapping"] = json.dumps({"id":"subnet_id"})  # this will map the subnet_id to id
