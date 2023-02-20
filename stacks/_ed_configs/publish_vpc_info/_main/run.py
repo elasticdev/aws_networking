@@ -33,10 +33,25 @@ def run(stackargs):
     publish_info = { "vpc_id": vpc_info["vpc_id"] }
 
     for security_group in security_groups:
+
+        if not security_group.get("sg_id"):
+            continue
+
+        if not security_group.get("name"):
+            continue
+
         _name = "security_group:{}".format(security_group["name"])
+
         publish_info[security_group["sg_id"]] = _name
 
     for subnet_info in subnets_info:
+
+        if not subnet_info.get("subnet_id"):
+            continue
+
+        if not subnet_info.get("name"):
+            continue
+
         _name = "environment:{}".format(subnet_info["name"])
         publish_info[subnet_info["subnet_id"]] = _name
 
