@@ -10,7 +10,11 @@ class EdResourceSettings(object):
     
         self.resource_values = { "aws_default_region":self.stack.aws_default_region,
                                  "name":self.stack.tf_main_name,
-                                 "region":self.stack.aws_default_region }
+                                 "tf_main_name":self.stack.tf_main_name,
+                                 "region":self.stack.aws_default_region,
+                                 "vpc_name":self.stack.vpc_name,
+                                 "vpc":self.stack.vpc_name,
+                                 "vpc_id":self.stack.vpc_id }
     
         return self.resource_values
 
