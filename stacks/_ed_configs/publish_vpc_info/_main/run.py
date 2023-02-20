@@ -18,7 +18,7 @@ def run(stackargs):
     _lookup = { "vpc": stack.vpc_name }
     _lookup["provider"] = "aws"
     _lookup["resource_type"] = "subnet"
-    _lookup["vpc_id"] = vpc_info["_id"]
+    _lookup["vpc_id"] = vpc_info["vpc_id"]
     _lookup["search_keys"] = "vpc_id,vpc"
     subnets_info = stack.get_resource(**_lookup)
 
@@ -26,19 +26,19 @@ def run(stackargs):
     _lookup = { "vpc": stack.vpc_name }
     _lookup["provider"] = "aws"
     _lookup["resource_type"] = "security_group"
-    _lookup["vpc_id"] = vpc_info["_id"]
+    _lookup["vpc_id"] = vpc_info["vpc_id"]
     _lookup["search_keys"] = "vpc_id,vpc"
     security_groups = stack.get_resource(**_lookup)
 
-    publish_info = { "vpc_id": vpc_info["_id"] }
+    publish_info = { "vpc_id": vpc_info["vpc_id"] }
 
     for security_group in security_groups:
         _name = "security_group:{}".format(security_group["name"])
-        publish_info[security_group["_id"]] = _name
+        publish_info[security_group["sg_id"]] = _name
 
     for subnet_info in subnets_info:
         _name = "environment:{}".format(subnet_info["name"])
-        publish_info[subnet_info["_id"]] = _name
+        publish_info[subnet_info["subnet_id"]] = _name
 
     stack.publish(publish_info)
 
