@@ -61,8 +61,8 @@ class EdResourceSettings(object):
 
     def get(self):
 
-        #resource_labels = { "keyboard":"querty",
-        #                    "vendor":"ibm" }
+        # random instance of this vpc
+        resource_labels = { "instance_vpc": self.stack.random_id() }
     
         ################################################
         # ElasticDev Resource Setting
@@ -73,6 +73,7 @@ class EdResourceSettings(object):
                                  "docker_settings":self._get_docker_settings(),
                                  "resource_values":self._get_resource_values_to_add(),
                                  "resource_type":self.stack.resource_type,
+                                 "resource_labels":resource_labels,
                                  "provider":self.stack.provider
                                  }
 
@@ -115,6 +116,7 @@ def run(stackargs):
     stack.init_substacks()
 
     # set variables
+    stack.set_variable("instance_vpc",stack.random_id())  # unique instance for the vpc
     stack.set_variable("resource_type","vpc")
     stack.set_variable("terraform_type","aws_vpc")
     stack.set_variable("provider","aws")
@@ -132,6 +134,10 @@ def run(stackargs):
         stack.public_subnet_tags["kubernetes.io/role/elb"] = "1"
         stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
+
+    # add to run metadata
+    data = { "instance_vpc": stack.instance_vpc }
+    stack.add_run_metadata(data)
 
     ################################################
     # Env Variables at execgroup run time
