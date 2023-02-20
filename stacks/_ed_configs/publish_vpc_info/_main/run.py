@@ -22,6 +22,9 @@ def run(stackargs):
     _lookup["search_keys"] = "vpc_id,vpc"
 
     subnets_info = stack.get_resource(**_lookup)
+    
+    if not subnets_info:
+        stack.logger.error("subnets not found to publish")
 
     # get security group info
     _lookup = { "vpc": stack.vpc_name }
@@ -31,30 +34,36 @@ def run(stackargs):
     _lookup["search_keys"] = "vpc_id,vpc"
     security_groups = stack.get_resource(**_lookup)
 
+    if not security_groups:
+        stack.logger.error("security_groups not found to publish")
+
     publish_info = { "vpc_id": vpc_info["vpc_id"] }
 
-    for security_group in security_groups:
+    if security_groups:
 
-        if not security_group.get("sg_id"):
-            continue
+        for security_group in security_groups:
 
-        if not security_group.get("name"):
-            continue
+            if not security_group.get("sg_id"):
+                continue
 
-        _name = "security_group:{}".format(security_group["name"])
+            if not security_group.get("name"):
+                continue
 
-        publish_info[security_group["sg_id"]] = _name
+            _name = "security_group:{}".format(security_group["name"])
 
-    for subnet_info in subnets_info:
+            publish_info[security_group["sg_id"]] = _name
 
-        if not subnet_info.get("subnet_id"):
-            continue
+    if subnets_info:
+        for subnet_info in subnets_info:
 
-        if not subnet_info.get("name"):
-            continue
+            if not subnet_info.get("subnet_id"):
+                continue
 
-        _name = "environment:{}".format(subnet_info["name"])
-        publish_info[subnet_info["subnet_id"]] = _name
+            if not subnet_info.get("name"):
+                continue
+
+            _name = "environment:{}".format(subnet_info["name"])
+            publish_info[subnet_info["subnet_id"]] = _name
 
     stack.publish(publish_info)
 
