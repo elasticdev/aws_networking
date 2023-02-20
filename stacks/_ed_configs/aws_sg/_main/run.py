@@ -53,8 +53,7 @@ class EdResourceSettings(object):
 
         self.tf_settings = { "tf_vars":tf_vars,
                              "terraform_type":self.stack.terraform_type,
-                             "tfstate_raw": "True",
-                             "resource_keys": "all" }
+                             "tfstate_raw": "True" }
     
         return self.tf_settings
 
