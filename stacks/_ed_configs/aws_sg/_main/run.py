@@ -158,7 +158,6 @@ def run(stackargs):
     else:
         stack.sg_3tier.insert(**inputargs)
 
-    # testtest777
     # parse terraform and insert subnets 
     overide_values = { "src_resource_type":stack.resource_type,
                        "src_provider":stack.provider,
@@ -177,18 +176,5 @@ def run(stackargs):
     inputargs["display"] = True
     inputargs["display_hash"] = stack.get_hash_object(inputargs)
     stack.parse_terraform.insert(**inputargs)
-
-    #if stack.labels: 
-    #    default_values["labels"] = stack.labels
-
-    #if stack.tags: 
-    #    default_values["tags"] = stack.tags
-
-    #inputargs = {"default_values":default_values}
-    #inputargs["automation_phase"] = "infrastructure"
-    #inputargs["human_description"] ="Parse Terraform for security groups" 
-    #inputargs["display"] = True
-    #inputargs["display_hash"] = stack.get_hash_object(inputargs)
-    #stack.parse_terraform.insert(**inputargs)
 
     return stack.get_results()
