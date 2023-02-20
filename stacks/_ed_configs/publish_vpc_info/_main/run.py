@@ -20,7 +20,11 @@ def run(stackargs):
     _lookup["resource_type"] = "subnet"
     _lookup["vpc_id"] = vpc_info["vpc_id"]
     _lookup["search_keys"] = "vpc_id,vpc"
+
+    # testtest777
+    print("e1"*32)
     subnets_info = stack.get_resource(**_lookup)
+    print("e2"*32)
 
     # get security group info
     _lookup = { "vpc": stack.vpc_name }
@@ -30,6 +34,7 @@ def run(stackargs):
     _lookup["search_keys"] = "vpc_id,vpc"
     security_groups = stack.get_resource(**_lookup)
 
+    print("e3"*32)
     publish_info = { "vpc_id": vpc_info["vpc_id"] }
 
     for security_group in security_groups:
