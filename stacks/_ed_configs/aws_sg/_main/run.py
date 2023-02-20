@@ -14,7 +14,11 @@ class EdResourceSettings(object):
                                  "region":self.stack.aws_default_region,
                                  "vpc_name":self.stack.vpc_name,
                                  "vpc":self.stack.vpc_name,
-                                 "vpc_id":self.stack.vpc_id }
+                                 "vpc_id":self.stack.vpc_id,
+                                 "_id":"{}-{}".format(self.stack.resource_type,
+                                                      self.stack.get_hash([ self.stack.tf_main_name,
+                                                                            self.stack.vpc_id ]))
+                                 }
     
         return self.resource_values
 
