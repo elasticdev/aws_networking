@@ -198,8 +198,8 @@ def run(stackargs):
         return stack.get_results()
 
     # publish info on dashboard
-    default_values = {"vpc_name":stack.vpc_name}
-    inputargs = {"default_values":default_values}
+    overide_values = {"vpc_name":stack.vpc_name}
+    inputargs = {"overide_values":overide_values}
     inputargs["automation_phase"] = "infrastructure"
     inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
     stack.publish_vpc.insert(display=True,**inputargs)
