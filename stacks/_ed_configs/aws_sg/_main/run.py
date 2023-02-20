@@ -15,9 +15,8 @@ class EdResourceSettings(object):
                                  "vpc_name":self.stack.vpc_name,
                                  "vpc":self.stack.vpc_name,
                                  "vpc_id":self.stack.vpc_id,
-                                 "_id":"{}-{}".format(self.stack.resource_type,
-                                                      self.stack.get_hash_object([ self.stack.tf_main_name,
-                                                                                   self.stack.vpc_id ]))
+                                 "_id":"sg-main-{}".format(self.stack.get_hash_object([ self.stack.tf_main_name,
+                                                                                        self.stack.vpc_id ])[0:7])
                                  }
     
         return self.resource_values
@@ -159,20 +158,25 @@ def run(stackargs):
     else:
         stack.sg_3tier.insert(**inputargs)
 
-    # revisit 
     # testtest777
-    # parse terraform and insert security groups 
-    #default_values = {"src_resource_type":"security_group"}
-    #default_values["src_resource_name"] = stack.tf_main_name
-    #default_values["dst_resource_type"] = "security_group"
-    #default_values["vpc"] = stack.vpc_name
-    #default_values["must_exists"] = True
-    #default_values["aws_default_region"] = stack.aws_default_region
-    #default_values["provider"] = "aws"
-    #default_values["terraform_type"] = stack.terraform_type,
-    #default_values["terraform_mode"] = "managed"
-    #default_values["mapping"] = json.dumps({"id":"sg_id"})
-    #default_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
+    # parse terraform and insert subnets 
+    overide_values = { "src_resource_type":stack.resource_type,
+                       "src_provider":stack.provider,
+                       "src_resource_name":stack.tf_main_name,
+                       "dst_terraform_type":stack.terraform_type }
+
+    overide_values["dst_resource_type"] = stack.resource_type
+    overide_values["mapping"] = json.dumps({"id":"sg_id"})
+    overide_values["must_exists"] = True
+    overide_values["aws_default_region"] = stack.aws_default_region
+    overide_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
+
+    inputargs = {"overide_values":overide_values}
+    inputargs["automation_phase"] = "infrastructure"
+    inputargs["human_description"] ="Parse Terraform for {}".format(stack.resource_type)
+    inputargs["display"] = True
+    inputargs["display_hash"] = stack.get_hash_object(inputargs)
+    stack.parse_terraform.insert(**inputargs)
 
     #if stack.labels: 
     #    default_values["labels"] = stack.labels
