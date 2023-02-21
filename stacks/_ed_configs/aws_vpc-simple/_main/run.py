@@ -53,7 +53,7 @@ class EdResourceSettings(object):
             tf_vars["cloud_tags"] = json.dumps(self.stack.b64_decode(self.stack.cloud_tags_hash))
 
         self.tf_settings = { "tf_vars":tf_vars,
-                             "terraform_type":"aws_vpc",
+                             "terraform_type":self.stack.terraform_type,
                              "tfstate_raw": "True",
                              "resource_keys": "all" }
     
@@ -76,8 +76,6 @@ class EdResourceSettings(object):
                                  "resource_labels":resource_labels,
                                  "provider":self.stack.provider
                                  }
-
-        #"resource_labels":resource_labels,
 
         return self.stack.b64_encode(ed_resource_settings)
 
@@ -134,10 +132,6 @@ def run(stackargs):
         stack.public_subnet_tags["kubernetes.io/role/elb"] = "1"
         stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
         #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
-
-    # add to run metadata
-    data = { "instance_vpc": stack.instance_vpc }
-    stack.add_run_metadata(data)
 
     # add vpc
     _ed_resource_settings = EdResourceSettings(stack=stack)
