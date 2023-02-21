@@ -28,7 +28,7 @@ class EdResourceSettings(object):
                      "stateful_id":self.stack.stateful_id,
                      "resource_tags": "{},{},{},{}".format(self.stack.resource_type, 
                                                            self.stack.vpc_name, 
-                                                           self.stack.vpc_name, 
+                                                           self.stack.vpc_id, 
                                                            self.stack.aws_default_region),
                      "name": self.stack.vpc_name }
     
