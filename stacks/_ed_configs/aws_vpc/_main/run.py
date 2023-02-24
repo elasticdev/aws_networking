@@ -65,7 +65,7 @@ class EdResourceSettings(object):
         if self.stack.one_nat_gateway_per_az in ["True",True,"true"]:
             tf_vars["one_nat_gateway_per_az"] = "true"
 
-        if hasattr(self,"cloud_tags_hash") and self.stack.cloud_tags_hash: 
+        if self.stack.cloud_tags_hash: 
             tf_vars["cloud_tags"] = json.dumps(self.stack.b64_decode(self.stack.cloud_tags_hash))
 
         self.tf_settings = { "tf_vars":tf_vars,
@@ -110,6 +110,7 @@ def run(stackargs):
     stack.parse.add_optional(key="reuse_nat_ips",default="true")
     stack.parse.add_optional(key="one_nat_gateway_per_az",default="false")
     stack.parse.add_optional(key="publish_to_saas",default="null")
+    stack.parse.add_optional(key="cloud_tags_hash",default='null')
 
     # if eks_cluster is specified, then add the correct tags to the vpc 
     stack.parse.add_optional(key="eks_cluster",default="null")
