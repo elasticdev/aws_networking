@@ -39,20 +39,51 @@ def run(stackargs):
 
     # Create VPC
     default_values = {"vpc_name":stack.vpc_name}
-    if hasattr(stack,"environment"): default_values["environment"] = stack.environment
-    if hasattr(stack,"main_network_block"): default_values["main_network_block"] = stack.main_network_block
-    if hasattr(stack,"vpc_tags"): default_values["vpc_tags"] = stack.vpc_tags
-    if hasattr(stack,"nat_gw_tags"): default_values["nat_gw_tags"] = stack.nat_gw_tags
-    if hasattr(stack,"public_subnet_tags"): default_values["public_subnet_tags"] = stack.public_subnet_tags
-    if hasattr(stack,"private_subnet_tags"): default_values["private_subnet_tags"] = stack.private_subnet_tags
-    if hasattr(stack,"enable_nat_gateway"): default_values["enable_nat_gateway"] = stack.enable_nat_gateway
-    if hasattr(stack,"single_nat_gateway"): default_values["single_nat_gateway"] = stack.single_nat_gateway
-    if hasattr(stack,"enable_dns_hostnames"): default_values["enable_dns_hostnames"] = stack.enable_dns_hostnames
-    if hasattr(stack,"reuse_nat_ips"): default_values["reuse_nat_ips"] = stack.reuse_nat_ips
-    if hasattr(stack,"one_nat_gateway_per_az"): default_values["one_nat_gateway_per_az"] = stack.one_nat_gateway_per_az
-    if hasattr(stack,"aws_default_region"): default_values["aws_default_region"] = stack.aws_default_region
-    if stack.labels: default_values["labels"] = stack.labels
-    if stack.tags: default_values["tags"] = stack.tags
+
+    if hasattr(stack,"environment"): 
+        default_values["environment"] = stack.environment
+
+    if hasattr(stack,"main_network_block"): 
+        default_values["main_network_block"] = stack.main_network_block
+
+    if hasattr(stack,"vpc_tags"): 
+        default_values["vpc_tags"] = stack.vpc_tags
+
+    if hasattr(stack,"nat_gw_tags"): 
+        default_values["nat_gw_tags"] = stack.nat_gw_tags
+
+    if hasattr(stack,"public_subnet_tags"): 
+        default_values["public_subnet_tags"] = stack.public_subnet_tags
+
+    if hasattr(stack,"private_subnet_tags"): 
+        default_values["private_subnet_tags"] = stack.private_subnet_tags
+
+    if hasattr(stack,"enable_nat_gateway"): 
+        default_values["enable_nat_gateway"] = stack.enable_nat_gateway
+
+    if hasattr(stack,"single_nat_gateway"): 
+        default_values["single_nat_gateway"] = stack.single_nat_gateway
+
+    if hasattr(stack,"enable_dns_hostnames"): 
+        default_values["enable_dns_hostnames"] = stack.enable_dns_hostnames
+
+    if hasattr(stack,"reuse_nat_ips"): 
+        default_values["reuse_nat_ips"] = stack.reuse_nat_ips
+
+    if hasattr(stack,"one_nat_gateway_per_az"): 
+        default_values["one_nat_gateway_per_az"] = stack.one_nat_gateway_per_az
+
+    if hasattr(stack,"aws_default_region"): 
+        default_values["aws_default_region"] = stack.aws_default_region
+
+    if stack.labels: 
+        default_values["labels"] = stack.labels
+
+    if stack.tags: 
+        default_values["tags"] = stack.tags
+
+    if stack.publish_to_saas: 
+        default_values["publish_to_saas"] = stack.publish_to_saas
 
     inputargs = {"default_values":default_values}
     inputargs["automation_phase"] = "infrastructure"
@@ -61,23 +92,22 @@ def run(stackargs):
 
     # Add security groups
     default_values = {"vpc_name":stack.vpc_name}
-    if hasattr(stack,"tier_level"): default_values["tier_level"] = stack.tier_level
-    if hasattr(stack,"aws_default_region"): default_values["aws_default_region"] = stack.aws_default_region
-    if stack.labels: default_values["labels"] = stack.labels
-    if stack.tags: default_values["tags"] = stack.tags
+
+    if hasattr(stack,"tier_level"): 
+        default_values["tier_level"] = stack.tier_level
+
+    if hasattr(stack,"aws_default_region"): 
+        default_values["aws_default_region"] = stack.aws_default_region
+
+    if stack.labels: 
+        default_values["labels"] = stack.labels
+
+    if stack.tags: 
+        default_values["tags"] = stack.tags
 
     inputargs = {"default_values":default_values}
     inputargs["automation_phase"] = "infrastructure"
     inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
     stack.aws_sg.insert(display=True,**inputargs)
-
-    if not stack.publish_to_saas: return stack.get_results()
-
-    # publish info on dashboard
-    default_values = {"vpc_name":stack.vpc_name}
-    inputargs = {"default_values":default_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] = 'Publish VPC {}'.format(stack.vpc_name)
-    stack.publish_vpc_info.insert(display=True,**inputargs)
 
     return stack.get_results()
