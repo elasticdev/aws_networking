@@ -195,19 +195,6 @@ def run(stackargs):
     inputargs["display_hash"] = stack.get_hash_object(inputargs)
     stack.parse_terraform.insert(**inputargs)
 
-    # add security groups
-    default_values = { "vpc_name":stack.vpc_name,
-                       "cloud_tags_hash":stack.cloud_tags_hash,
-                       "aws_default_region":stack.aws_default_region }
-
-    if hasattr(stack,"tier_level"): 
-        default_values["tier_level"] = stack.tier_level
-
-    inputargs = {"default_values":default_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] = 'Creating security groups for VPC {}'.format(stack.vpc_name)
-    stack.aws_sg.insert(display=True,**inputargs)
-
     if not stack.publish_to_saas: 
         return stack.get_results()
 
