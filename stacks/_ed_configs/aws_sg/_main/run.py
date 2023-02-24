@@ -109,20 +109,13 @@ def run(stackargs):
     stack.init_execgroups()
     stack.init_substacks()
 
-    stack.set_variable("provider","aws")
-
-    # get vpc_id
-    _lookup = { "must_exists":True,
-                "resource_type": "vpc",
-                "provider": stack.provider,
-                "vpc": stack.vpc_name,
-                "name": stack.vpc_name,
-                "region": stack.aws_default_region,
-                "search_keys": "vpc" }
-
-    vpc_id = list(stack.get_resource(**_lookup))[0]["vpc_id"]
+    # get vpc info
+    vpc_id = stack.get_resource(name=stack.vpc_name,
+                                resource_type="vpc",
+                                must_exists=True)[0]["vpc_id"]
 
     # set variables
+    stack.set_variable("provider","aws")
     stack.set_variable("vpc_id",vpc_id)
     stack.set_variable("resource_type","security_group")
     stack.set_variable("tf_main_name","{}-security-group-tf".format(stack.vpc_name))

@@ -15,11 +15,10 @@ def run(stackargs):
                                   must_exists=True)[0]
 
     # get subnet info
-    _lookup = { "vpc": stack.vpc_name }
-    _lookup["provider"] = "aws"
+    _lookup = { "provider": "aws" }
     _lookup["resource_type"] = "subnet"
     _lookup["vpc_id"] = vpc_info["vpc_id"]
-    _lookup["search_keys"] = "vpc_id,vpc"
+    _lookup["search_keys"] = "vpc_id"
 
     subnets_info = stack.get_resource(**_lookup)
     
@@ -27,11 +26,10 @@ def run(stackargs):
         stack.logger.error("subnets not found to publish")
 
     # get security group info
-    _lookup = { "vpc": stack.vpc_name }
-    _lookup["provider"] = "aws"
+    _lookup = { "provider": "aws" }
     _lookup["resource_type"] = "security_group"
     _lookup["vpc_id"] = vpc_info["vpc_id"]
-    _lookup["search_keys"] = "vpc_id,vpc"
+    _lookup["search_keys"] = "vpc_id"
     security_groups = stack.get_resource(**_lookup)
 
     if not security_groups:
