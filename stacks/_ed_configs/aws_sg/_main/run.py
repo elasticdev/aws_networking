@@ -110,9 +110,15 @@ def run(stackargs):
     stack.init_substacks()
 
     # get vpc info
-    vpc_id = stack.get_resource(name=stack.vpc_name,
+    vpc_info = stack.get_resource(name=stack.vpc_name,
                                 resource_type="vpc",
-                                must_exists=True)[0]["vpc_id"]
+                                must_exists=True)[0]
+
+    print("n1"*32)
+    print(vpc_info)
+    print("n2"*32)
+
+    vpc_id = vpc_info["vpc_id"]
 
     # set variables
     stack.set_variable("provider","aws")

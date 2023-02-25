@@ -68,10 +68,12 @@ class EdResourceSettings(object):
         if self.stack.cloud_tags_hash: 
             tf_vars["cloud_tags"] = json.dumps(self.stack.b64_decode(self.stack.cloud_tags_hash))
 
+        resource_keys_maps = {"vpc_id", "id"}
+
         self.tf_settings = { "tf_vars":tf_vars,
                              "terraform_type":self.stack.terraform_type,
                              "tfstate_raw": "True",
-                             "tfstate_raw": "True",
+                             "resource_keys_maps": resource_keys_maps,
                              "resource_keys": "all" }
 
         return self.tf_settings
