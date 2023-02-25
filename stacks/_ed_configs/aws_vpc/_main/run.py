@@ -76,6 +76,10 @@ class EdResourceSettings(object):
                              "resource_keys_maps": resource_keys_maps,
                              "resource_keys": "all" }
 
+        # testtest777
+        print(resource_keys_maps)
+        raise Exception('yo')
+
         return self.tf_settings
 
     def get(self):
