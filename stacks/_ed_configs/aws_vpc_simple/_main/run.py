@@ -40,10 +40,6 @@ class EdResourceSettings(object):
     
     def _get_tf_settings(self):
     
-        ################################################
-        # Terraform vars and execution settings
-        # will automatically at TF_VAR_ as a prefix
-        ################################################
         tf_vars = { "vpc_name": self.stack.vpc_name,
                     "vpc_tags": json.dumps(self.stack.vpc_tags),
                     "aws_default_region": self.stack.aws_default_region,
@@ -91,7 +87,6 @@ def run(stackargs):
 
     # Add default variables
     stack.parse.add_required(key="vpc_name")
-    stack.parse.add_required(key="stateful_id",default="_random")
 
     stack.parse.add_optional(key="tier_level")
     stack.parse.add_optional(key="aws_default_region",default="us-east-1")
@@ -121,6 +116,7 @@ def run(stackargs):
     # set variables
     _default_tags = {"vpc_name":stack.vpc_name}
 
+    stack.set_variable("stateful_id",stack.random_id())
     stack.set_variable("instance_vpc",stack.random_id())  # unique instance for the vpc
     stack.set_variable("resource_type","vpc")
     stack.set_variable("terraform_type","aws_vpc")
