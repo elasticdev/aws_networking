@@ -114,12 +114,8 @@ def run(stackargs):
 
     # get vpc info
     vpc_info = stack.get_resource(name=stack.vpc_name,
-                                resource_type="vpc",
-                                must_exists=True)[0]
-
-    print("n1"*32)
-    print(vpc_info)
-    print("n2"*32)
+                                  resource_type="vpc",
+                                  must_exists=True)[0]
 
     vpc_id = vpc_info["vpc_id"]
 
@@ -160,23 +156,24 @@ def run(stackargs):
     else:
         stack.sg_3tier.insert(**inputargs)
 
+    # testtest777
     # parse terraform and insert subnets 
-    overide_values = { "src_resource_type":stack.resource_type,
-                       "src_provider":stack.provider,
-                       "src_resource_name":stack.tf_main_name,
-                       "dst_terraform_type":stack.terraform_type }
+    #overide_values = { "src_resource_type":stack.resource_type,
+    #                   "src_provider":stack.provider,
+    #                   "src_resource_name":stack.tf_main_name,
+    #                   "dst_terraform_type":stack.terraform_type }
 
-    overide_values["dst_resource_type"] = stack.resource_type
-    overide_values["mapping"] = json.dumps({"id":"sg_id"})
-    overide_values["must_exists"] = True
-    overide_values["aws_default_region"] = stack.aws_default_region
-    overide_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
+    #overide_values["dst_resource_type"] = stack.resource_type
+    #overide_values["mapping"] = json.dumps({"id":"sg_id"})
+    #overide_values["must_exists"] = True
+    #overide_values["aws_default_region"] = stack.aws_default_region
+    #overide_values["add_values"] = json.dumps({"vpc_id":stack.vpc_id,"vpc":stack.vpc_name})
 
-    inputargs = {"overide_values":overide_values}
-    inputargs["automation_phase"] = "infrastructure"
-    inputargs["human_description"] ="Parse Terraform for {}".format(stack.resource_type)
-    inputargs["display"] = True
-    inputargs["display_hash"] = stack.get_hash_object(inputargs)
-    stack.parse_terraform.insert(**inputargs)
+    #inputargs = {"overide_values":overide_values}
+    #inputargs["automation_phase"] = "infrastructure"
+    #inputargs["human_description"] ="Parse Terraform for {}".format(stack.resource_type)
+    #inputargs["display"] = True
+    #inputargs["display_hash"] = stack.get_hash_object(inputargs)
+    #stack.parse_terraform.insert(**inputargs)
 
     return stack.get_results()
