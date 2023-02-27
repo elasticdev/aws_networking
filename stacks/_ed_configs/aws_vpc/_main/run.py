@@ -142,6 +142,7 @@ def run(stackargs):
 
     stack.set_variable("instance_vpc",stack.random_id())  # unique instance for the vpc
     stack.set_variable("resource_type","vpc")
+    stack.set_variable("resource_name",stack.vpc_name)
     stack.set_variable("terraform_type","aws_vpc")
     stack.set_variable("provider","aws")
     stack.set_variable("vpc_tags",_default_tags.copy())

@@ -124,6 +124,7 @@ def run(stackargs):
     stack.set_variable("vpc_id",vpc_id)
     stack.set_variable("resource_type","security_group")
     stack.set_variable("tf_main_name","{}-security-group-tf".format(stack.vpc_name))
+    stack.set_variable("resource_name","{}-security-group-tf".format(stack.vpc_name))
     stack.set_variable("terraform_type","aws_security_group")
 
     # set ed/tf resource settings
