@@ -20,6 +20,7 @@ resource "aws_vpc" "main" {
 
   tags = merge(
     var.cloud_tags,
+    var.vpc_tags,
     {
       Name      = var.vpc_name
       Product   = "vpc"
@@ -33,6 +34,7 @@ resource "aws_internet_gateway" "this" {
 
   tags = merge(
     var.cloud_tags,
+    var.vpc_tags,
     {
       Name      = "${var.vpc_name}-internet-gateway"
       Product   = "internet-gateway"
@@ -51,6 +53,8 @@ resource "aws_subnet" "public" {
 
   tags = merge(
       var.cloud_tags,
+      var.vpc_tags,
+      var.public_subnet_tags,
       {
         Name                        = "${var.vpc_name}-service-public"
         subnet_environment          = "public"
@@ -69,6 +73,8 @@ resource "aws_subnet" "private" {
 
   tags = merge(
       var.cloud_tags,
+      var.vpc_tags,
+      var.private_subnet_tags,
       {
         Name                        = "${var.vpc_name}-service-private"
         subnet_environment          = "private"
@@ -86,6 +92,7 @@ resource "aws_default_route_table" "public" {
 
   tags = merge(
     var.cloud_tags,
+    var.vpc_tags,
     {
       Name      = "${var.vpc_name}-route-public"
       Product   = "route-table"
@@ -116,6 +123,7 @@ resource "aws_route_table" "private" {
 
   tags = merge(
     var.cloud_tags,
+    var.vpc_tags,
     {
       Name      = "${var.vpc_name}-route-private"
       Product   = "route-table"

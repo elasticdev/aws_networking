@@ -72,3 +72,9 @@ variable "private_subnet_tags" {
   description = "private subnet tags"
   type        = map(string)
 }
+
+variable "cloud_tags" {
+  description = "additional tags as a map"
+  type        = map(string)
+  default     = {}
+}

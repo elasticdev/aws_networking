@@ -9,6 +9,7 @@ resource "aws_eip" "nat_gw_elastic_ip" {
 
   tags = merge(
       var.nat_gw_tags,
+      var.cloud_tags,
       {
         Name            = var.vpc_name
         iac_environment = var.environment
@@ -52,6 +53,7 @@ module "vpc" {
   # add VPC/Subnet tags required by EKS (eks)
   tags = merge(
       var.vpc_tags,
+      var.cloud_tags,
       {
         Name            = var.vpc_name
         iac_environment = var.environment
@@ -61,6 +63,7 @@ module "vpc" {
 
   public_subnet_tags = merge(
       var.vpc_tags,
+      var.cloud_tags,
       var.public_subnet_tags,
       {
         Name                        = var.vpc_name
@@ -72,6 +75,7 @@ module "vpc" {
 
   private_subnet_tags = merge(
       var.vpc_tags,
+      var.cloud_tags,
       var.private_subnet_tags,
       {
         Name                                 = var.vpc_name
