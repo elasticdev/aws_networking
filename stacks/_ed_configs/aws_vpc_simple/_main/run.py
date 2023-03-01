@@ -42,6 +42,8 @@ class EdResourceSettings(object):
     
         tf_vars = { "vpc_name": self.stack.vpc_name,
                     "vpc_tags": json.dumps(self.stack.vpc_tags),
+                    "public_subnet_tags": json.dumps(self.stack.public_subnet_tags),
+                    "private_subnet_tags": json.dumps(self.stack.private_subnet_tags),
                     "aws_default_region": self.stack.aws_default_region,
                     }
     
