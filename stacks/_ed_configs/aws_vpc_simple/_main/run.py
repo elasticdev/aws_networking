@@ -134,8 +134,7 @@ def run(stackargs):
     if stack.eks_cluster: 
         stack.vpc_tags["kubernetes.io/cluster/{}".format(stack.eks_cluster)] = "shared"
         stack.public_subnet_tags["kubernetes.io/role/elb"] = "1"
-        stack.public_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
-        #stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
+        stack.private_subnet_tags["kubernetes.io/role/internal_elb"] = "1"
 
     # add vpc
     _ed_resource_settings = EdResourceSettings(stack=stack)
