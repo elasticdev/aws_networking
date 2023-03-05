@@ -91,7 +91,7 @@ def run(stackargs):
     stack.parse.add_required(key="stateful_id",default="_random")
 
     # docker image to execute terraform with
-    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:14")  # testtest 777 upgrade
+    stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:1.3.7")
     stack.parse.add_optional(key="aws_default_region",default="us-east-1")
     stack.parse.add_optional(key="use_docker",default=True,null_allowed=True)
 
