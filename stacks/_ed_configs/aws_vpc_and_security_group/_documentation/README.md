@@ -52,7 +52,6 @@ infrastructure:
           enable_dns_hostnames: true
           reuse_nat_ips: true
           one_nat_gateway_per_az: false
-          use_docker: true
        credentials:
            - reference: aws_2
              orchestration: true
