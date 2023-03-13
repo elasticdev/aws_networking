@@ -93,7 +93,6 @@ def run(stackargs):
     # docker image to execute terraform with
     stack.parse.add_optional(key="docker_exec_env",default="elasticdev/terraform-run-env:1.3.7")
     stack.parse.add_optional(key="aws_default_region",default="us-east-1")
-    stack.parse.add_optional(key="use_docker",default=True,null_allowed=True)
 
     # labels and tags
     stack.parse.add_optional(key="labels",default="null")
@@ -137,8 +136,6 @@ def run(stackargs):
     env_vars["ed_resource_settings_hash".upper()] = _ed_resource_settings.get()
     env_vars["aws_default_region".upper()] = stack.aws_default_region
     env_vars["docker_exec_env".upper()] = stack.docker_exec_env
-    env_vars["use_docker".upper()] = True
-    env_vars["CLOBBER"] = True
 
     inputargs = {"display":True}
     inputargs["env_vars"] = json.dumps(env_vars)
